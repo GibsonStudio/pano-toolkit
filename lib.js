@@ -6,6 +6,7 @@ var debugMode = (typeof debugMode === 'undefined') ? false : debugMode;
 if (debugMode) {
   var h = '<script src="classPopup.js"></script>';
   h += '<script src="classMessage.js"></script>';
+  h += '<script src="classUpload.js"></script>';
   h += '<script src="debugPano.js"></script>';
   document.write(h);
 }

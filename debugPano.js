@@ -196,36 +196,17 @@ function debugRefreshSaved ()
 function debugUploadImage ()
 {
 
-  var p = new Popup();
-  p.title = "Upload Image:";
-  p.callback = "doImageUpload";
-  p.addField({ id:"file", type:"file", accept:".jpg,.jpeg,.png", label:"Choose file...." });
-  p.show();
+  var u = new Upload({ title:"My Title", text:"Some load of text.<br /><br />Please upload something...." });
+  u.show();
 
 }
 
 
 
-
-function doImageUpload (args)
+function uploadMessage (txt)
 {
-
-  var args = args || args;
-
-  $.ajax({
-    url:"php/uploadFile.php",
-    type:"POST",
-    dataType:"multipart/form-data",
-    data: { file:args.file }
-  }).done(function (data) {
-
-    var data = JSON.parse(data);
-    new Message({ text:data.result });
-
-  });
-
+  new Message({ text:txt });
 }
-
 
 
 

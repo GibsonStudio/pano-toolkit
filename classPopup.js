@@ -57,6 +57,29 @@ function Popup (args) {
   }
 
 
+  /*
+  this.submit = function ()
+  {
+
+    var form = document.createElement("form");
+    form.method = "POST";
+    form.action = "php\\uploadFile.php";
+    form.enctype = "multipart/form-data";
+
+    for (var i = 0; i < this.fields.length; i++) {
+
+      var el = document.createElement("input");
+      el.name = this.fields[i].id;
+      el.value = this.fields[i].value;
+      form.appendChild(el);
+
+    }
+
+    form.submit();
+
+  }
+  */
+
 
   this.createElement = function () {
 
