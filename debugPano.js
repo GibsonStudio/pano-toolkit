@@ -97,6 +97,7 @@ function iniDebug () {
   h += '<button class="debugButton" onclick="debugGenerateXML();">Get XML</button>';
   h += '<button class="debugButton" onclick="debugSave();">Save</button>';
   h += '<button class="debugButton" onclick="debugDeletePano();">Delete</button>';
+  h += '<button class="debugButton" onclick="debugUploadImage();">Upload Image</button>';
   h += '<button class="debugButton" onclick="debugPublish();">Publish</button>';
   h += '</div>';
 
@@ -155,6 +156,8 @@ function iniDebug () {
 
 
 
+
+
 function debugToggle ()
 {
   var debug = document.getElementById("debug");
@@ -183,6 +186,42 @@ function debugRefreshSaved ()
   }).done(function (data) {
     var el = document.getElementById("savedPanoramas");
     el.innerHTML = data;
+  });
+
+}
+
+
+
+
+function debugUploadImage ()
+{
+
+  var p = new Popup();
+  p.title = "Upload Image:";
+  p.callback = "doImageUpload";
+  p.addField({ id:"file", type:"file", accept:".jpg,.jpeg,.png", label:"Choose file...." });
+  p.show();
+
+}
+
+
+
+
+function doImageUpload (args)
+{
+
+  var args = args || args;
+
+  $.ajax({
+    url:"php/uploadFile.php",
+    type:"POST",
+    dataType:"multipart/form-data",
+    data: { file:args.file }
+  }).done(function (data) {
+
+    var data = JSON.parse(data);
+    new Message({ text:data.result });
+
   });
 
 }

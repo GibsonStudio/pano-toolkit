@@ -8,6 +8,7 @@
 // v1.3 15/1/2020 - added height to field args
 // v1.31 15/1/2020 - allowed zero values for value, min and max
 // v1.32 20/1/2020 - rewrote getData to retun standard object and use dots, e.g. args.id
+// v1.33 21/1/2020 - added args.accept - for file type inputs
 
 // Buttons:
 // If no butttons are specified, ther default Submit and Cancel buttons are added
@@ -233,6 +234,7 @@ function Popup (args) {
     this.min = typeof(args.min) === "undefined" ? '' : args.min;
     this.max = typeof(args.max) === "undefined" ? '' : args.max;
     this.height = args.height || false;
+    this.accept = args.accept || false;
 
     if (typeof(args.id) === "undefined") {
       this.id = "Field-" + Math.round(Math.random() * 1000000);
@@ -274,6 +276,7 @@ function Popup (args) {
       if (this.type) { thisInput.type = this.type; }
       if (this.min) { thisInput.min = this.min; }
       if (this.max) { thisInput.max = this.max; }
+      if (this.type == "file" && this.accept) { thisInput.accept = this.accept; }
       thisInput.id = this.id;
       thisContainer.appendChild(thisInput);
 

@@ -1,12 +1,7 @@
 
 
-
-//TODO: remove "overlay-" from hotspot IDs?
-//TODO: rename pano.id to pano.loadedID, or pano.dbID
-
-//TODO: rewrite publish.php so that it creates a zip archive and gives a download Link
-// or maybe copy files AND create zip archive, in new "downloads folder"
-// usename of pano as name of zip file?
+//TODO: need image uploader
+// and image picker
 
 
 //bugs
