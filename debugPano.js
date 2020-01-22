@@ -20,6 +20,8 @@ addScenePopup.addField({ label:"Lon", id:"lon", type:"number" });
 addScenePopup.addButton({ text:"Add", callback:"debugAddScene" });
 addScenePopup.addButton({ type:"cancel", text:"Close" });
 
+var uploadPopup;
+
 
 function iniDebug () {
 
@@ -192,7 +194,7 @@ function debugRefreshSaved ()
 
 
 
-
+/*
 function debugUploadImage ()
 {
 
@@ -202,10 +204,25 @@ function debugUploadImage ()
 }
 
 
-
 function uploadMessage (txt)
 {
   new Message({ text:txt });
+}
+*/
+
+
+function debugUploadImage ()
+{
+
+  uploadPopup = new Upload({ title:"Upload File:", text:"Supported formats are jpg, jpeg, and png." });
+  uploadPopup.show();
+
+}
+
+
+function debugCloseUpload ()
+{
+  uploadPopup.close();
 }
 
 

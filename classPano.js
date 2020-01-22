@@ -1,7 +1,6 @@
 
 
-//TODO: need image uploader
-// and image picker
+//TODO: need  image picker
 
 
 //bugs

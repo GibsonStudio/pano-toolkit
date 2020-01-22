@@ -1,8 +1,6 @@
 
 
 
-
-
 function Upload (args) {
 
   var args = args || {};
@@ -87,14 +85,53 @@ function Upload (args) {
 
     }
 
+    var form = document.createElement("form");
+    form.id = "uploadForm";
+    form.action = this.action;
+    form.method = this.method;
+    form.enctype = "multipart/form-data";
+    form.target = "_blank";
 
-    // add iframe
+    var input = document.createElement("input");
+    input.type = "file";
+    input.name = "file";
+    input.id = "file";
+    form.appendChild(input);
 
-    var frame = document.createElement("iframe");
-    frame.src = "php/upload.php";
-    frame.style.setProperty("width", "100%");
-    frame.style.setProperty("border", "none");
-    el.appendChild(frame);
+    el.appendChild(form);
+
+
+    // add buttons
+    var bc = document.createElement("div");
+    bc.style.setProperty("padding", "20px");
+
+    var myThis = this;
+
+    var b1 = document.createElement("button");
+    b1.innerHTML = "Upload";
+    b1.style.setProperty("border", "none");
+    b1.style.setProperty("color", "666666");
+    b1.style.setProperty("background-color", "#d4d4d4");
+    b1.style.setProperty("font-size", "12px");
+    b1.style.setProperty("padding", "4px");
+    b1.style.setProperty("margin", "2px");
+    b1.style.setProperty("cursor", "pointer");
+    b1.onclick = function (event) { document.getElementById("uploadForm").submit(); myThis.close(); }
+    bc.appendChild(b1);
+
+    var b2 = document.createElement("button");
+    b2.innerHTML = "Cancel";
+    b2.style.setProperty("border", "none");
+    b2.style.setProperty("color", "666666");
+    b2.style.setProperty("background-color", "#d4d4d4");
+    b2.style.setProperty("font-size", "12px");
+    b2.style.setProperty("padding", "4px");
+    b2.style.setProperty("margin", "2px");
+    b2.style.setProperty("cursor", "pointer");
+    b2.onclick = function (event) { myThis.close(); }
+    bc.appendChild(b2);
+
+    el.appendChild(bc);
 
     return el;
 
