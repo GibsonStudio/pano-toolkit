@@ -23,6 +23,5 @@ $data->xml = $pano["xml"];
 
 
 echo json_encode($data);
-//echo $pano["xml"];
 
 ?>

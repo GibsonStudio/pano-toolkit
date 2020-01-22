@@ -21,6 +21,7 @@ addScenePopup.addButton({ text:"Add", callback:"debugAddScene" });
 addScenePopup.addButton({ type:"cancel", text:"Close" });
 
 var uploadPopup;
+var imagePicker;
 
 
 function iniDebug () {
@@ -107,6 +108,7 @@ function iniDebug () {
   h += '<div style="font-size:12px; font-weight:bold;">Scene</div>';
   h += '<button class="debugButton" onclick="addScenePopup.show();">Add</button>';
   h += '<button class="debugButton" onclick="editCurrentScene();">Edit</button>';
+  h += '<button class="debugButton" onclick="debugChangeImage();">Change Image</button>';
   h += '<button class="debugButton" onclick="debugSetScenePosition();">Set Position</button>';
   h += '<button class="debugButton" onclick="debugDeleteCurrentScene();">Delete Current</button>';
   h += '<button class="debugButton" onclick="addHotspotPopup.show();">Add Hotspot</button>';
@@ -189,6 +191,34 @@ function debugRefreshSaved ()
     var el = document.getElementById("savedPanoramas");
     el.innerHTML = data;
   });
+
+}
+
+
+
+
+function debugChangeImage ()
+{
+
+  imagePicker = new ImagePicker();
+  imagePicker.show();
+
+}
+
+
+
+function debugChangeSceneImage (img)
+{
+
+  imagePicker.close();
+
+  if (pano.loadedScene) {
+
+    pano.loadedScene.texture = img;
+    debugAddSceneLinks();
+    pano.loadedScene.loadTexture();
+
+  }
 
 }
 
