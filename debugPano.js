@@ -49,23 +49,27 @@ function iniDebug () {
 
 
   // load button
-  var el = document.createElement("div");
+  if (onlineMode) {
 
-  el.style.setProperty("position", "absolute");
-  el.style.setProperty("left", "0px");
-  el.style.setProperty("top", "90px");
-  el.style.setProperty("width", "60px");
-  el.style.setProperty("padding", "8px");
-  el.style.setProperty("background-color", "#005eb8");
-  el.style.setProperty("color", "#ffffff");
-  el.style.setProperty("font-size", "12px");
-  el.style.setProperty("border-top-right-radius", "8px");
-  el.style.setProperty("border-bottom-right-radius", "8px");
-  el.style.setProperty("cursor", "pointer");
-  el.innerHTML = "load";
-  el.onclick = function () { debugLoadToggle(); }
+    var el = document.createElement("div");
 
-  dc.appendChild(el);
+    el.style.setProperty("position", "absolute");
+    el.style.setProperty("left", "0px");
+    el.style.setProperty("top", "90px");
+    el.style.setProperty("width", "60px");
+    el.style.setProperty("padding", "8px");
+    el.style.setProperty("background-color", "#005eb8");
+    el.style.setProperty("color", "#ffffff");
+    el.style.setProperty("font-size", "12px");
+    el.style.setProperty("border-top-right-radius", "8px");
+    el.style.setProperty("border-bottom-right-radius", "8px");
+    el.style.setProperty("cursor", "pointer");
+    el.innerHTML = "load";
+    el.onclick = function () { debugLoadToggle(); }
+
+    dc.appendChild(el);
+
+  }
 
 
 
@@ -98,17 +102,21 @@ function iniDebug () {
   h += '<div style="font-size:12px; font-weight:bold;">Panorama</div>';
   h += '<button class="debugButton" onclick="debugShowPanoInfo();">Info</button>';
   h += '<button class="debugButton" onclick="debugGenerateXML();">Get XML</button>';
-  h += '<button class="debugButton" onclick="debugSave();">Save</button>';
-  h += '<button class="debugButton" onclick="debugDeletePano();">Delete</button>';
-  h += '<button class="debugButton" onclick="debugUploadImage();">Upload Image</button>';
-  h += '<button class="debugButton" onclick="debugPublish();">Publish</button>';
+
+  if (onlineMode) {
+    h += '<button class="debugButton" onclick="debugSave();">Save</button>';
+    h += '<button class="debugButton" onclick="debugDeletePano();">Delete</button>';
+    h += '<button class="debugButton" onclick="debugUploadImage();">Upload Image</button>';
+    h += '<button class="debugButton" onclick="debugPublish();">Publish</button>';
+  }
+
   h += '</div>';
 
   h += '<div style="border:1px solid #999999; margin-bottom:10px;">';
   h += '<div style="font-size:12px; font-weight:bold;">Scene</div>';
   h += '<button class="debugButton" onclick="addScenePopup.show();">Add</button>';
   h += '<button class="debugButton" onclick="editCurrentScene();">Edit</button>';
-  h += '<button class="debugButton" onclick="debugChangeImage();">Change Image</button>';
+  if (onlineMode) { h += '<button class="debugButton" onclick="debugChangeImage();">Change Image</button>'; }
   h += '<button class="debugButton" onclick="debugSetScenePosition();">Set Position</button>';
   h += '<button class="debugButton" onclick="debugDeleteCurrentScene();">Delete Current</button>';
   h += '<button class="debugButton" onclick="addHotspotPopup.show();">Add Hotspot</button>';
@@ -182,45 +190,9 @@ function debugLoadToggle ()
 
 
 
-function debugRefreshSaved ()
-{
-
-  $.ajax({
-    url:"php/getSavedPanoramas.php"
-  }).done(function (data) {
-    var el = document.getElementById("savedPanoramas");
-    el.innerHTML = data;
-  });
-
-}
 
 
 
-
-function debugChangeImage ()
-{
-
-  imagePicker = new ImagePicker();
-  imagePicker.show();
-
-}
-
-
-
-function debugChangeSceneImage (img)
-{
-
-  imagePicker.close();
-
-  if (pano.loadedScene) {
-
-    pano.loadedScene.texture = img;
-    debugAddSceneLinks();
-    pano.loadedScene.loadTexture();
-
-  }
-
-}
 
 
 
@@ -240,127 +212,6 @@ function uploadMessage (txt)
 }
 */
 
-
-function debugUploadImage ()
-{
-
-  uploadPopup = new Upload({ title:"Upload File:", text:"Supported formats are jpg, jpeg, and png." });
-  uploadPopup.show();
-
-}
-
-
-function debugCloseUpload ()
-{
-  uploadPopup.close();
-}
-
-
-
-function debugDeletePano ()
-{
-
-  var myMessage = "This will remove the currently loaded panorama data from the database.";
-  myMessage += "<br /><br />This cannot be undone.";
-
-  var del = new Popup({ title:"Delete?", text:myMessage });
-  del.addButton({ text:"OK", callback:"debugDeleteConfirmed" });
-  del.addButton({ type:"cancel" });
-  del.show();
-
-}
-
-
-
-function debugDeleteConfirmed ()
-{
-
-  if (!pano.id) {
-    new Message({ text:"ERROR: No database panorama loaded." });
-  } else {
-
-    $.ajax({
-      url:"php/deletePano.php",
-      type:"POST",
-      data: { id:pano.id }
-    }).done(function (data) {
-
-      if (data == "OK") {
-
-        new Message ({ text:"Panorama deleted OK. Loading default...." });
-        pano.id = 0;
-        pano.name = "";
-        pano.scenes = [];
-        loadXML();
-
-      } else {
-        new Message({ text:data });
-      }
-
-    });
-
-  }
-
-}
-
-
-function debugPublish ()
-{
-
-  $.ajax({
-    url:"php/publish.php",
-    type:"POST",
-    data:{ id:pano.id, filename:pano.name }
-  }).done(function (data) {
-
-    var data = JSON.parse(data);
-    new Message({ text:data.result });
-
-    // download zip?
-    if (data.filename) {
-
-      var link = data.filename;
-      var dl = document.createElement("a");
-      dl.download = link;
-      dl.href = "download\\" + link;
-      dl.click();
-
-    }
-
-  });
-
-}
-
-
-
-
-
-
-function debugSave ()
-{
-
-    var myXML = pano.getXML();
-
-    $.ajax({
-      url:"php/savePano.php",
-      type:"POST",
-      data: { id:pano.id, name:pano.name, xml:myXML }
-    }).done(function (data) {
-
-      var data = JSON.parse(data);
-
-      if (data.insertID) {
-        pano.id = data.insertID;
-        new Message({ text:"New pano saved OK (" + data.insertID + ")" });
-      } else if (data.result == "OK") {
-        new Message({ text:"Pano " + pano.id + " updated OK." });
-      } else {
-        new Message({ text:data.result });
-      }
-
-    });
-
-}
 
 
 
@@ -467,36 +318,6 @@ function editScene (args)
 }
 
 
-/*
-function editSceneOLD (args)
-{
-
-  var args = args || {};
-  var myID = pano.loadedScene.id;
-  var myTexture = pano.loadedScene.texture;
-  var myLon = pano.loadedScene.lon;
-  var myLat = pano.loadedScene.lat;
-
-  for (var i = 0; i < args.length; i++) {
-    if (args[i].id == "id") { myID = args[i].value; }
-    if (args[i].id == "texture") { myTexture = args[i].value; }
-    if (args[i].id == "lon") { if (args[i].value) { myLon = parseFloat(args[i].value); } }
-    if (args[i].id == "lat") { if (args[i].value) { myLat = parseFloat(args[i].value); } }
-  }
-
-  pano.loadedScene.id = myID;
-  pano.loadedScene.texture = myTexture;
-  pano.loadedScene.lon = myLon;
-  pano.loadedScene.lat = myLat;
-
-  // reload scene?
-  debugAddSceneLinks();
-  pano.loadedScene.loadTexture();
-
-}
-*/
-
-
 
 function debugAddScene (args)
 {
@@ -514,34 +335,6 @@ function debugAddScene (args)
   debugAddSceneLinks();
 
 }
-
-
-
-/*
-function debugAddSceneOLD (args)
-{
-
-  var args = args || {};
-
-  var myID = "scene-" + Math.round(Math.random() * 100000);
-  var myImage = "";
-  var myLon = 0;
-  var myLat = 0;
-
-  for (var i = 0; i < args.length; i++) {
-    if (args[i].id == "id") { myID = args[i].value; }
-    if (args[i].id == "image") { myImage = args[i].value; }
-    if (args[i].id == "lon") { if (args[i].value) { myLon = parseFloat(args[i].value); } }
-    if (args[i].id == "lat") { if (args[i].value) { myLat = parseFloat(args[i].value); } }
-  }
-
-  var panoScene = new PanoScene({ id:myID, texture:myImage, lon:myLon, lat:myLat });
-  pano.scenes.push(panoScene);
-
-  debugAddSceneLinks();
-
-}
-*/
 
 
 
@@ -579,62 +372,11 @@ function debugAddHotspot (args)
 }
 
 
-/*
-function debugAddHotspotOLD (args)
-{
-
-   var args = args || {};
-
-   var myID = "hs-" + Math.round(Math.random() * 100000);
-   var myLink = "";
-   var myTitle = "";
-   var myLon = 180 - pano.lon;
-   var myLat = -pano.lat;
-
-   for (var i = 0; i < args.length; i++) {
-     if (args[i].id == "id") { myID = args[i].value; }
-     if (args[i].id == "link") { myLink = args[i].value; }
-     if (args[i].id == "title") { myTitle = args[i].value; }
-     if (args[i].id == "lon") { if (args[i].value) { myLon = parseFloat(args[i].value); } }
-     if (args[i].id == "lat") { if (args[i].value) { myLat = parseFloat(args[i].value); } }
-   }
-
-   pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, lon:myLon, lat:myLat }, true);
-
-}
-*/
-
-
 
 
 
 function debugGenerateXML ()
 {
-
-  /*
-  var xml = '<?xml version="1.0" encoding="utf-8" ?>' + "\n\n";
-  xml += '<scenes>' + "\n\n";
-
-  for (var i = 0; i < pano.scenes.length; i++) {
-
-    var s = pano.scenes[i];
-    var sceneTag = '<scene id="' + s.id + '" image="' + s.texture + '" lon="' + s.lon + '" lat="' + s.lat + '">';
-    xml += "\t" + sceneTag + "\n";
-
-    for (var j = 0; j < pano.scenes[i].hotspots.length; j++) {
-
-       xml += "\t\t";
-       xml += pano.scenes[i].hotspots[j].getXML();
-       xml += "\n";
-
-    }
-
-    xml += "\t</scene>\n\n";
-
-  }
-
-  xml += "</scenes>";
-  */
 
   var xml = pano.getXML();
   var xmlPopup = new Popup({ title:"XML data for scenes.xml", width:"500px" });
@@ -657,8 +399,6 @@ function panoHotspotClicked () {
 
 function panoHotspotUpdate (args) {
 
-  console.log("PANO UPDATE");
-
   var id = args.id ? args.id : "";
   var title = args.title ? args.title : "";
   var originalID = pano.clickedHotspot.id;
@@ -677,38 +417,6 @@ function panoHotspotUpdate (args) {
 }
 
 
-
-/*
-function panoHotspotUpdateOLD (args) {
-
-  var id = "";
-  var link = "";
-  var title = ";"
-  var sceneLon = 0;
-  var sceneLat = 0;
-
-  for (var i = 0; i < args.length; i++) {
-    if (args[i].id == "id") { id = args[i].value; }
-    if (args[i].id == "link") { link = args[i].value; }
-    if (args[i].id == "title") { title = args[i].value; }
-    if (args[i].id == "sceneLon") { sceneLon = parseFloat(args[i].value); }
-    if (args[i].id == "sceneLat") { sceneLat = parseFloat(args[i].value); }
-  }
-
-  var originalID = pano.clickedHotspot.id;
-  pano.clickedHotspot.id = id;
-  pano.clickedHotspot.link = link;
-  pano.clickedHotspot.title = title;
-  pano.clickedHotspot.sceneLon = sceneLon;
-  pano.clickedHotspot.sceneLat = sceneLat;
-
-  // update html element
-  var el = document.getElementById("overlay-" + originalID);
-  el.id = "overlay-" + id;
-  el.title = title;
-
-}
-*/
 
 
 function panoHotspotDelete (args)
@@ -730,22 +438,6 @@ function panoHotspotShowXML ()
 }
 
 
-
-
-/*
-function debugAddHotspotOLD ()
-{
-
-  var myID = document.getElementById("hotspot-id").value || "hs-" + Math.round(Math.random() * 100000);
-  var myLink = document.getElementById("hotspot-link").value || "";
-  var myTitle = document.getElementById("hotspot-title").value || "";
-  var myLon = 180 - pano.lon;
-  var myLat = -pano.lat;
-
-  pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, lon:myLon, lat:myLat }, true);
-
-}
-*/
 
 
 

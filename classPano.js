@@ -1,6 +1,6 @@
 
 
-//TODO: need  image picker
+//TODO: separate online and offline code
 
 
 //bugs

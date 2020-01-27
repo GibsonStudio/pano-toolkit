@@ -2,14 +2,22 @@
 var popup;
 
 var debugMode = (typeof debugMode === 'undefined') ? false : debugMode;
+var onlineMode = (typeof onlineMode === 'undefined') ? false : onlineMode;
 
 if (debugMode) {
+
   var h = '<script src="classPopup.js"></script>';
   h += '<script src="classMessage.js"></script>';
-  h += '<script src="classUpload.js"></script>';
-  h += '<script src="classImagePicker.js"></script>';
   h += '<script src="debugPano.js"></script>';
+
+  if (onlineMode) {
+    h += '<script src="libOnline.js"></script>';
+    h += '<script src="classUpload.js"></script>';
+    h += '<script src="classImagePicker.js"></script>';
+  }
+
   document.write(h);
+
 }
 
 var resizeCanvas = true;
@@ -28,35 +36,6 @@ var pano = new Pano(); // global ref must me called pano
 
 
 
-
-function loadFromDatabase (panoID)
-{
-
-  var panoID = panoID || false;
-  if (!panoID) { return false; }
-
-  $.ajax({
-    url:"php/getData.php",
-    type:"POST",
-    data:{ id:panoID }
-  }).done(function (data) {
-
-    if (data == "error" || !data) {
-      new Message({ text:"ERROR: Pano not loaded." });
-    } else {
-
-      pano.init();
-      var data = JSON.parse(data);
-      pano.id = data.id;
-      pano.name = data.name;
-      pano.scenes = [];
-      parseXML(data.xml);
-
-    }
-
-  });
-
-}
 
 
 
