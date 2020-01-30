@@ -9,7 +9,9 @@ if (!$id) {
 
 require('connect.php');
 
-$query = $db->prepare("DELETE FROM panoramas WHERE id=:id");
+//$query = $db->prepare("DELETE FROM panoramas WHERE id=:id");
+
+$query = $db->prepare("UPDATE panoramas SET deleted='1' WHERE id=:id");
 $query->bindValue(":id", $id, PDO::PARAM_INT);
 $query->execute();
 

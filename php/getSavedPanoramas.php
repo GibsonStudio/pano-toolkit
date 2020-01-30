@@ -2,7 +2,7 @@
 
 require('connect.php');
 
-$sql = "SELECT* FROM panoramas";
+$sql = "SELECT* FROM panoramas WHERE deleted <> 1 OR deleted IS NULL";
 $query = $db->prepare($sql);
 $query->execute();
 $rows = $query->fetchAll();

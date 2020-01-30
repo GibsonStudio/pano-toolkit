@@ -42,7 +42,7 @@ if ($update) {
   if ($query->rowCount()) {
     $data->result = "OK";
   } else {
-    $data->result = "error";
+    $data->result = "No data updated. Probably no new data.";
   }
 
 } else {

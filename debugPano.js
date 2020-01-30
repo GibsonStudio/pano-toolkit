@@ -186,6 +186,11 @@ function debugLoadToggle ()
   var debugLoad = document.getElementById("debugLoad");
   debugLoad.hidden = !debugLoad.hidden;
   debug.hidden = true;
+
+  if (!debugLoad.hidden) {
+    debugRefreshSaved();
+  }
+
 }
 
 
@@ -263,6 +268,8 @@ function debugUpdatePano (args)
 function debugAddSceneLinks ()
 {
 
+  pano.sortScenes();
+
   var cont = document.getElementById("debugSceneLinks");
   cont.innerHTML = "";
 
@@ -295,6 +302,7 @@ function editCurrentScene ()
   editScenePopup.addField({ label:"Image", id:"texture", value:pano.loadedScene.texture });
   editScenePopup.addField({ label:"Lon", id:"lon", type:"number", value:pano.loadedScene.lon });
   editScenePopup.addField({ label:"Lat", id:"lat", type:"number", value:pano.loadedScene.lat });
+  editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:pano.loadedScene.isHomeScene });
   editScenePopup.addButton({ text:"Save", callback:"editScene" });
   editScenePopup.addButton({ type:"cancel", text:"Cancel" });
   editScenePopup.show();
@@ -310,6 +318,9 @@ function editScene (args)
   pano.loadedScene.texture = args.texture ? args.texture : pano.loadedScene.texture;
   pano.loadedScene.lon = args.lon ? parseFloat(args.lon) : pano.loadedScene.lon;
   pano.loadedScene.lat = args.lat ? parseFloat(args.lat) : pano.loadedScene.lat;
+
+  if (args.isHomeScene) { pano.clearHomeScene(); }
+  pano.loadedScene.isHomeScene = args.isHomeScene ? args.isHomeScene : false;
 
   // reload scene?
   debugAddSceneLinks();

@@ -9,6 +9,7 @@
 // v1.31 15/1/2020 - allowed zero values for value, min and max
 // v1.32 20/1/2020 - rewrote getData to retun standard object and use dots, e.g. args.id
 // v1.33 21/1/2020 - added args.accept - for file type inputs
+// v1.34 30/1/2020 - made checkboxes properly display thier initial value
 
 // Buttons:
 // If no butttons are specified, ther default Submit and Cancel buttons are added
@@ -57,28 +58,6 @@ function Popup (args) {
   }
 
 
-  /*
-  this.submit = function ()
-  {
-
-    var form = document.createElement("form");
-    form.method = "POST";
-    form.action = "php\\uploadFile.php";
-    form.enctype = "multipart/form-data";
-
-    for (var i = 0; i < this.fields.length; i++) {
-
-      var el = document.createElement("input");
-      el.name = this.fields[i].id;
-      el.value = this.fields[i].value;
-      form.appendChild(el);
-
-    }
-
-    form.submit();
-
-  }
-  */
 
 
   this.createElement = function () {
@@ -296,6 +275,7 @@ function Popup (args) {
       if (fullWidthElements.indexOf(this.type) >= 0) { thisInput.style.setProperty("width", "96%"); }
 
       thisInput.value = this.value;
+      if (this.type == "checkbox" || this.type == "radio") { if (this.value) {thisInput.checked = true; } }
       if (this.type) { thisInput.type = this.type; }
       if (this.min) { thisInput.min = this.min; }
       if (this.max) { thisInput.max = this.max; }

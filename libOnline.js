@@ -127,6 +127,7 @@ function debugDeleteConfirmed ()
         pano.name = "";
         pano.scenes = [];
         loadXML();
+        debugRefreshSaved();
 
       } else {
         new Message({ text:data });
@@ -141,6 +142,8 @@ function debugDeleteConfirmed ()
 
 function debugPublish ()
 {
+
+  new Message({ text:"Publishing...." });
 
   $.ajax({
     url:"php/publish.php",

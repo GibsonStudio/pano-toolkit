@@ -66,8 +66,9 @@ function parseXML (data)
     var img = $(this).attr("image");
     var lon = parseFloat($(this).attr("lon"));
     var lat = parseFloat($(this).attr("lat"));
+    var isHomeScene = $(this).attr("isHomeScene");
 
-    var panoScene = new PanoScene({ id:id, texture:img, lon:lon, lat:lat });
+    var panoScene = new PanoScene({ id:id, texture:img, lon:lon, lat:lat, isHomeScene:isHomeScene });
 
     $(this).find("hotspot").each(function () {
 
@@ -91,7 +92,8 @@ function parseXML (data)
   //init();
   if (debugMode) { debugAddSceneLinks(); }
 
-  pano.scenes[0].load();
+  //pano.scenes[0].load();
+  pano.home();
 
 }
 

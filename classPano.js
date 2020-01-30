@@ -1,6 +1,8 @@
 
 
-//TODO: separate online and offline code
+
+//TODO: reorganize scripts to make it more logical
+
 
 
 //bugs
@@ -35,6 +37,7 @@ function Pano (args) {
   this.mesh = false;
   this.material = false;
   this.clickedHotspot = false;
+  //this.homeSceneId = "e2";
 
 
 
@@ -67,6 +70,17 @@ function Pano (args) {
     }
 
     return {};
+
+  }
+
+
+  this.getSceneIndexById = function (sceneID) {
+
+    for (var i = 0; i < this.scenes.length; i++) {
+      if (this.scenes[i].id == sceneID) { return i; }
+    }
+
+    return 0;
 
   }
 
@@ -128,7 +142,11 @@ function Pano (args) {
     for (var i = 0; i < this.scenes.length; i++) {
 
       var s = this.scenes[i];
-      var sceneTag = '<scene id="' + s.id + '" image="' + s.texture + '" lon="' + s.lon + '" lat="' + s.lat + '">';
+
+      var sceneTag = '<scene id="' + s.id + '" image="' + s.texture + '" lon="' + s.lon + '" lat="' + s.lat + '"';
+      if (s.isHomeScene) { sceneTag  += ' isHomeScene="true"'; }
+      sceneTag += '>';
+
       xml += "\t" + sceneTag + "\n";
 
       for (var j = 0; j < this.scenes[i].hotspots.length; j++) {
@@ -149,6 +167,46 @@ function Pano (args) {
 
   }
 
+
+  this.getHomeSceneIndex = function () {
+
+    for (var i = 0; i < this.scenes.length; i++) {
+      if (this.scenes[i].isHomeScene) { return i; }
+    }
+
+    return 0;
+
+  }
+
+
+  this.home = function () {
+
+    this.scenes[this.getHomeSceneIndex()].load();
+
+  }
+
+
+  this.sortScenes = function () {
+
+    this.scenes.sort(function (a, b) {
+      a = a.id.toLowerCase();
+      b = b.id.toLowerCase();
+      if (a < b) { return -1; }
+      if (a > b) { return 1; }
+      return 0;
+    });
+
+  }
+
+
+  this.clearHomeScene = function () {
+    for (var i = 0; i < this.scenes.length; i++) {
+      this.scenes[i].isHomeScene = false;
+    }
+  }
+
+
+
 }
 
 
@@ -161,6 +219,7 @@ function PanoScene (args) {
   this.hotspots = args.hotspots || [];
   this.lat = args.lat || 0;
   this.lon = args.lon || 0;
+  this.isHomeScene = args.isHomeScene || false;
 
   this.tx = false;
   this.loader = false;
