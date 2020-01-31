@@ -1,8 +1,12 @@
 
 var popup;
 
+// if debugMode = true, the panorama can be edited
 var debugMode = (typeof debugMode === 'undefined') ? false : debugMode;
+
+// if onlineMode = true, the code which connects to a MySQL database and saves the panoramas is enabled
 var onlineMode = (typeof onlineMode === 'undefined') ? false : onlineMode;
+
 
 if (debugMode) {
 
@@ -89,10 +93,8 @@ function parseXML (data)
 
   });
 
-  //init();
   if (debugMode) { debugAddSceneLinks(); }
 
-  //pano.scenes[0].load();
   pano.home();
 
 }
@@ -164,8 +166,6 @@ function init (loadDatabaseData)
 
   scene.add(pano.mesh);
 
-  //if (debugMode) { dummy.add(); }
-
   // window resize event
   if (resizeCanvas) { window.addEventListener('resize', function (e) { resizeMe(); }); }
 
@@ -181,9 +181,6 @@ function init (loadDatabaseData)
   canvasEl.addEventListener('touchstart', panoClicked);
   canvasEl.addEventListener('touchmove', eventMove);
   canvasEl.addEventListener('touchend', eventStop);
-
-  //pano.scenes[0].load();
-  //loadXML();
 
   if (loadDatabaseData) {
     loadFromDatabase(5);
@@ -238,21 +235,7 @@ function ToggleHelp ()
 
 
 
-function toggleFullscreen ()
-{
 
-  if (!document.fullscreenElement && !document.mozFullScreenElement
-    && !document.webkitFullscreenElement && !document.msFullscreenElement ) {
-
-    enterFullscreen();
-
-  } else {
-
-    exitFullscreen();
-
-  }
-
-}
 
 
 
@@ -381,8 +364,6 @@ function eventMove (e)
     }
   }
 
-  //if (dummy.beingDragged) { dummy.eventMove(); }
-
 }
 
 
@@ -420,6 +401,36 @@ function eventWheel (e)
 function eventClick (e)
 {
 }
+
+
+
+
+
+
+
+
+
+// ******** index.html buttons ******** //
+
+function toggleFullscreen ()
+{
+
+  if (!document.fullscreenElement && !document.mozFullScreenElement
+    && !document.webkitFullscreenElement && !document.msFullscreenElement ) {
+
+    enterFullscreen();
+
+  } else {
+
+    exitFullscreen();
+
+  }
+
+}
+
+
+
+
 
 
 

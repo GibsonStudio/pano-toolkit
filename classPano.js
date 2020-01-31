@@ -3,6 +3,9 @@
 
 //TODO: reorganize scripts to make it more logical
 
+//TODO: add 'jump to scene' menu when published
+
+//TODO: make debugPano into a class?
 
 
 //bugs
