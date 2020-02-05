@@ -1,5 +1,5 @@
 
-var popup; // TODO chnage to Popup
+//var popup; // TODO chnage to Popup
 var pano; // TODO change to Pano
 var Toolkit;
 
@@ -14,7 +14,6 @@ if (debugMode) {
 
   var h = '<script src="classPopup.js"></script>';
   h += '<script src="classMessage.js"></script>';
-  h += '<script src="debugPano.js"></script>'; //TODO move all of this to toolkit
   h += '<script src="classToolkit.js"></script>';
 
   if (onlineMode) {
@@ -103,7 +102,7 @@ function parseXML (data)
 
   });
 
-  if (debugMode) { debugAddSceneLinks(); }
+  if (debugMode) { Toolkit.AddSceneLinks(); }
 
   pano.home();
 
@@ -150,7 +149,7 @@ function init (loadDatabaseData)
     $('#my-container').height(HEIGHT);
   }
 
-  if (debugMode) { iniDebug(); }
+  if (debugMode) { Toolkit.Init(); }
 
   container = document.getElementById('my-canvas-container');
 

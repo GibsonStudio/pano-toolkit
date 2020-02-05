@@ -11,6 +11,7 @@
 // v1.33 21/1/2020 - added args.accept - for file type inputs
 // v1.34 30/1/2020 - made checkboxes properly display thier initial value
 // v1.35 5/2/2020 - allowed this.callback to call a function, if this.callback contains ")"
+//                - allowed Class.Function to be used as a callback
 
 // Buttons:
 // If no butttons are specified, ther default Submit and Cancel buttons are added
@@ -351,11 +352,17 @@ function Popup (args) {
 
         if (this.callback.indexOf(")") > 0) {
           eval(this.callback);
+        } else if (this.callback.indexOf(".") > 0) {
+
+          var args = JSON.stringify(this.parent.getData());
+          eval(this.callback + "(" + args + ")");
+
         } else {
           window[this.callback](this.parent.getData());
         }
 
         if (this.parent.closeOnSubmit) { this.parent.close(); }
+
       }
 
     }

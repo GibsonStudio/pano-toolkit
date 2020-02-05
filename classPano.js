@@ -9,11 +9,14 @@
 
 //TODO: rename some PHP scripts, e.g. getSavedPanoramas.php to getSaved.php
 //TODO: Add Scene, make default.jpg default image name
-
+//TODO: add confirm dialog to Toolkit.DeleteCurrentScene()
 
 //bugs
 //* error if clicking "Navigate To" after changing data
-//* panoScene.load is not a function on published scene
+//* panoScene.load is not a function on published scene - may be OK?
+//* Scene > Change Image is not working
+
+
 
 function Pano (args) {
 
@@ -454,10 +457,10 @@ function PanoHotspot (args) {
         hp.addField({ label:"Scene Lon", id:"sceneLon", type:"number", value:this.sceneLon });
         hp.addField({ label:"Scene Lat", id:"sceneLat", type:"number", value:this.sceneLat });
 
-        hp.addButton({ text:"Navigate To", callback:"panoHotspotClicked" });
-        hp.addButton({ text:"Update", callback:"panoHotspotUpdate" });
-        hp.addButton({ text:"Show XML", callback:"panoHotspotShowXML" });
-        hp.addButton({ text:"Delete", callback:"panoHotspotDelete"});
+        hp.addButton({ text:"Navigate To", callback:"Toolkit.HotspotClicked" });
+        hp.addButton({ text:"Update", callback:"Toolkit.UpdateHotspot" });
+        hp.addButton({ text:"Show XML", callback:"Toolkit.ShowHotspotXML" });
+        hp.addButton({ text:"Delete", callback:"Toolkit.DeleteHotspot"});
         hp.addButton({type:"cancel" });
         hp.show();
 
