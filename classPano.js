@@ -2,10 +2,8 @@
 
 
 //TODO: add 'jump to scene' menu when published
-
-
-//TODO: rename some PHP scripts, e.g. getSavedPanoramas.php to getSaved.php
-//TODO: add confirm dialog to Toolkit.DeleteCurrentScene()
+//TODO: move functions from lib.js
+//TODO, move lib.js globals to Pano? - , container, camera, scene, renderer, mesh not used in global context
 
 //bugs
 
@@ -39,7 +37,16 @@ function Pano (args) {
   this.mesh = false;
   this.material = false;
   this.clickedHotspot = false;
-  //this.homeSceneId = "e2";
+
+  this.resize = typeof args.resize === "undefined" ? true : args.resize;
+  this.WIDTH = args.WIDTH || 980; // these display sizes are used if resizeCanvas = false;
+  this.HEIGHT = args.HEIGHT || 524; // size for Storyline, 980 x 524
+
+
+  this.container = false;
+  this.camera = false;
+  this.scene= false;
+  this.renderer = false;
 
 
 
@@ -52,6 +59,7 @@ function Pano (args) {
     this.clickedHotspot = false;
 
   }
+
 
   this.load = function (panoSceneID, args) {
 
@@ -87,7 +95,6 @@ function Pano (args) {
   }
 
 
-
   this.updatePosition = function () {
 
     var dx = mouse.x - this.clickedX;
@@ -117,8 +124,8 @@ function Pano (args) {
     var pos = new THREE.Vector3(myPos[0], myPos[1], myPos[2]);
     var vec = pos.project(cam);
 
-    var myX = (vec.x + 1) / 2 * WIDTH;
-    var myY = -(vec.y - 1) / 2 * HEIGHT;
+    var myX = (vec.x + 1) / 2 * this.WIDTH;
+    var myY = -(vec.y - 1) / 2 * this.HEIGHT;
 
     if (vec.z > 1) {
       myX = -200;
@@ -133,7 +140,6 @@ function Pano (args) {
   this.toggleAutorotate = function () {
     this.autoRotate = !this.autoRotate;
   }
-
 
 
   this.getXML = function () {
@@ -288,8 +294,8 @@ function PanoScene (args) {
     if (clickedHotspot.sceneLat) { Pano.lat = clickedHotspot.sceneLat; }
 
     // reset zoom (camera fov)
-    camera.fov = Pano.fovIni;
-    camera.updateProjectionMatrix();
+    Pano.camera.fov = Pano.fovIni;
+    Pano.camera.updateProjectionMatrix();
 
     this.addHotspots();
 
@@ -453,7 +459,7 @@ function PanoHotspot (args) {
         hp.addButton({ text:"Navigate To", callback:"Toolkit.HotspotClicked" });
         hp.addButton({ text:"Update", callback:"Toolkit.UpdateHotspot" });
         hp.addButton({ text:"Show XML", callback:"Toolkit.ShowHotspotXML" });
-        hp.addButton({ text:"Delete", callback:"Toolkit.DeleteHotspot"});
+        hp.addButton({ text:"Delete", callback:"Toolkit.ShowDeleteHotspotDialog"});
         hp.addButton({type:"cancel" });
         hp.show();
 
@@ -509,7 +515,7 @@ function PanoHotspot (args) {
   // positions the html element on the screen
   this.positionMyElement = function () {
 
-    var pos = Pano.toScreenPosition(this.position, camera);
+    var pos = Pano.toScreenPosition(this.position, Pano.camera);
     var xPos = pos.x - (50 / 2);
     var yPos = pos.y - (50 / 2);
     $('#overlay-' + this.id).css({ 'left': xPos + 'px', 'top': yPos + 'px' });

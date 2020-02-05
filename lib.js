@@ -25,20 +25,10 @@ if (debugMode) {
 
 }
 
-var resizeCanvas = true;
-var WIDTH = 800; // these display sizes are used if resizeCanvas = false;
-var HEIGHT = 600; // size for Storyline, 980 x 524
-var preloadImages = false;
 
 var mouse = {};
 mouse.x = 0;
 mouse.y = 0;
-
-var container, camera, scene, renderer, mesh; //TODO, move these to Pano? - mesh not used in global context
-
-
-
-
 
 
 
@@ -118,7 +108,7 @@ function animate ()
   checkControls();
   positionCamera();
 
-  renderer.render(scene, camera);
+  Pano.renderer.render(Pano.scene, Pano.camera);
 
   positionOverlays();
 
@@ -128,8 +118,8 @@ function animate ()
 
 function positionCamera ()
 {
-  camera.rotation.set(0, toRads(Pano.lon), 0);
-  camera.rotateX(-toRads(Pano.lat));
+  Pano.camera.rotation.set(0, toRads(Pano.lon), 0);
+  Pano.camera.rotateX(-toRads(Pano.lat));
 }
 
 
@@ -141,27 +131,27 @@ function init (loadDatabaseData)
 
   var loadDatabaseData = loadDatabaseData || false;
 
-  if (resizeCanvas) {
+  if (Pano.resize) {
     resizeMe();
   } else {
-    $('#my-container').width(WIDTH);
-    $('#my-container').height(HEIGHT);
+    $('#my-container').width(Pano.WIDTH);
+    $('#my-container').height(Pano.HEIGHT);
   }
 
   if (debugMode) { Toolkit.Init(); }
 
-  container = document.getElementById('my-canvas-container');
+  Pano.container = document.getElementById('my-canvas-container');
 
-  scene = new THREE.Scene();
+  Pano.scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera( Pano.fovIni, WIDTH / HEIGHT, 1, 1100);
-  camera.target = new THREE.Vector3(0, 0, 0);
+  Pano.camera = new THREE.PerspectiveCamera( Pano.fovIni, Pano.WIDTH / Pano.HEIGHT, 1, 1100);
+  Pano.camera.target = new THREE.Vector3(0, 0, 0);
 
-  renderer = new THREE.WebGLRenderer();
-  renderer.setSize(WIDTH, HEIGHT);
-  renderer.domElement.id = 'my-canvas';
+  Pano.renderer = new THREE.WebGLRenderer();
+  Pano.renderer.setSize(Pano.WIDTH, Pano.HEIGHT);
+  Pano.renderer.domElement.id = 'my-canvas';
 
-  container.appendChild(renderer.domElement);
+  Pano.container.appendChild(Pano.renderer.domElement);
 
   // add environment sphere and apply texture
   var geometry = new THREE.SphereBufferGeometry(Pano.length, 60, 40);
@@ -172,10 +162,10 @@ function init (loadDatabaseData)
   Pano.mesh = new THREE.Mesh( geometry, Pano.material );
   Pano.mesh.rotation.y = THREE.Math.degToRad(90); // so it starts in the center
 
-  scene.add(Pano.mesh);
+  Pano.scene.add(Pano.mesh);
 
   // window resize event
-  if (resizeCanvas) { window.addEventListener('resize', function (e) { resizeMe(); }); }
+  if (Pano.resize) { window.addEventListener('resize', function (e) { resizeMe(); }); }
 
   var canvasEl = document.getElementById("my-canvas-container"); // ("my-container");
 
@@ -214,14 +204,14 @@ function checkControls ()
   else if (Pano.activeControl == 'move-up') { Pano.lat -= 1; }
   else if (Pano.activeControl == 'move-down') { Pano.lat += 1; }
   else if (Pano.activeControl == 'zoom-in') {
-    var fov = camera.fov - 1;
-    camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
-    camera.updateProjectionMatrix();
+    var fov = Pano.camera.fov - 1;
+    Pano.camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
+    Pano.camera.updateProjectionMatrix();
   }
   else if (Pano.activeControl == 'zoom-out') {
-    var fov = camera.fov + 1;
-    camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
-    camera.updateProjectionMatrix();
+    var fov = Pano.camera.fov + 1;
+    Pano.camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
+    Pano.camera.updateProjectionMatrix();
   }
 
   if (Pano.autoRotate) { Pano.lon -= 0.4; }
@@ -303,16 +293,17 @@ function positionOverlays ()
 
 function resizeMe ()
 {
-  WIDTH = window.innerWidth;
-  HEIGHT = window.innerHeight;
-  $('#my-container').width(WIDTH);
-  $('#my-container').height(HEIGHT);
-  $('#my-canvas').width(WIDTH);
-  $('#my-canvas').height(HEIGHT);
+
+  Pano.WIDTH = window.innerWidth;
+  Pano.HEIGHT = window.innerHeight;
+  $('#my-container').width(Pano.WIDTH);
+  $('#my-container').height(Pano.HEIGHT);
+  $('#my-canvas').width(Pano.WIDTH);
+  $('#my-canvas').height(Pano.HEIGHT);
 
   // move controls
   var cL = $("#controls-container").width();
-  var cL = (WIDTH / 2) - (cL / 2);
+  var cL = (Pano.WIDTH / 2) - (cL / 2);
   $("#controls-container").css({ 'left': cL + 'px' });
 
 }
@@ -398,9 +389,9 @@ function eventStop (e)
 
 function eventWheel (e)
 {
-  var fov = camera.fov + (event.deltaY * 0.05);
-  camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
-  camera.updateProjectionMatrix();
+  var fov = Pano.camera.fov + (event.deltaY * 0.05);
+  Pano.camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
+  Pano.camera.updateProjectionMatrix();
 }
 
 

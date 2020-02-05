@@ -125,7 +125,7 @@ function Toolkit (args) {
     h += '<button class="debugButton" onclick="Toolkit.ShowEditSceneDialog();">Edit</button>';
     if (onlineMode) { h += '<button class="debugButton" onclick="Toolkit.ShowImagePicker();">Change Image</button>'; }
     h += '<button class="debugButton" onclick="Toolkit.SetScenePosition();">Set Position</button>';
-    h += '<button class="debugButton" onclick="Toolkit.DeleteCurrentScene();">Delete Current</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowDeleteSceneDialog();">Delete Current</button>';
     h += '<button class="debugButton" onclick="Toolkit.AddHotspotPopup.show();">Add Hotspot</button>';
     h += '</div>';
 
@@ -307,7 +307,20 @@ function Toolkit (args) {
   }
 
 
-  this.DeleteCurrentScene = function () {
+  this.ShowDeleteSceneDialog = function () {
+
+    var myMessage = "This will remove the current scene.";
+    myMessage += "<br /><br />The database is not updated until you save.";
+
+    var del = new Popup({ title:"Delete?", text:myMessage });
+    del.addButton({ text:"OK", callback:"Toolkit.DeleteScene()" });
+    del.addButton({ type:"cancel" });
+    del.show();
+
+  }
+
+
+  this.DeleteScene = function () {
 
     var sceneCount = Pano.scenes.length;
     if (sceneCount < 2) { return false; }
@@ -367,7 +380,20 @@ function Toolkit (args) {
   }
 
 
-  this.DeleteHotspot = function (args) {
+  this.ShowDeleteHotspotDialog = function () {
+
+    var myMessage = "This will remove the current hotspot.";
+    myMessage += "<br /><br />The database is not updated until you save.";
+
+    var del = new Popup({ title:"Delete?", text:myMessage });
+    del.addButton({ text:"OK", callback:"Toolkit.DeleteHotspot()" });
+    del.addButton({ type:"cancel" });
+    del.show();
+
+  }
+
+
+  this.DeleteHotspot = function () {
     Pano.clickedHotspot.delete();
   }
 
@@ -429,7 +455,7 @@ function Toolkit (args) {
   this.RefreshSaved = function () {
 
     $.ajax({
-      url:"php/getSavedPanoramas.php"
+      url:"php/getSaved.php"
     }).done(function (data) {
       var el = document.getElementById("savedPanoramas");
       el.innerHTML = data;
