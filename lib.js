@@ -1,6 +1,5 @@
 
-//var popup; // TODO chnage to Popup
-var pano; // TODO change to Pano
+var Pano;
 var Toolkit;
 
 // if debugMode = true, the panorama can be edited
@@ -35,7 +34,7 @@ var mouse = {};
 mouse.x = 0;
 mouse.y = 0;
 
-var container, camera, scene, renderer, mesh;
+var container, camera, scene, renderer, mesh; //TODO, move these to Pano? - mesh not used in global context
 
 
 
@@ -46,7 +45,7 @@ var container, camera, scene, renderer, mesh;
 function initVars ()
 {
 
-  pano = new Pano(); // global ref must me called pano, TODO: change this to Pano
+  Pano = new Pano(); // global ref must me called pano, TODO: change this to Pano
   if (debugMode) { Toolkit = new Toolkit(); }
 
 }
@@ -98,13 +97,13 @@ function parseXML (data)
 
     });
 
-    pano.scenes.push(panoScene);
+    Pano.scenes.push(panoScene);
 
   });
 
   if (debugMode) { Toolkit.AddSceneLinks(); }
 
-  pano.home();
+  Pano.home();
 
 }
 
@@ -129,8 +128,8 @@ function animate ()
 
 function positionCamera ()
 {
-  camera.rotation.set(0, toRads(pano.lon), 0);
-  camera.rotateX(-toRads(pano.lat));
+  camera.rotation.set(0, toRads(Pano.lon), 0);
+  camera.rotateX(-toRads(Pano.lat));
 }
 
 
@@ -155,7 +154,7 @@ function init (loadDatabaseData)
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera( pano.fovIni, WIDTH / HEIGHT, 1, 1100);
+  camera = new THREE.PerspectiveCamera( Pano.fovIni, WIDTH / HEIGHT, 1, 1100);
   camera.target = new THREE.Vector3(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer();
@@ -165,15 +164,15 @@ function init (loadDatabaseData)
   container.appendChild(renderer.domElement);
 
   // add environment sphere and apply texture
-  var geometry = new THREE.SphereBufferGeometry(pano.length, 60, 40);
+  var geometry = new THREE.SphereBufferGeometry(Pano.length, 60, 40);
   geometry.scale(-1, 1, 1);
 
   var texture = new THREE.Texture();
-  pano.material = new THREE.MeshBasicMaterial({ map:texture });
-  pano.mesh = new THREE.Mesh( geometry, pano.material );
-  pano.mesh.rotation.y = THREE.Math.degToRad(90); // so it starts in the center
+  Pano.material = new THREE.MeshBasicMaterial({ map:texture });
+  Pano.mesh = new THREE.Mesh( geometry, Pano.material );
+  Pano.mesh.rotation.y = THREE.Math.degToRad(90); // so it starts in the center
 
-  scene.add(pano.mesh);
+  scene.add(Pano.mesh);
 
   // window resize event
   if (resizeCanvas) { window.addEventListener('resize', function (e) { resizeMe(); }); }
@@ -208,29 +207,29 @@ function init (loadDatabaseData)
 function checkControls ()
 {
 
-  if (pano.activeControl) { pano.active = false; }
+  if (Pano.activeControl) { Pano.active = false; }
 
-  if (pano.activeControl == 'move-left') { pano.lon += 1; }
-  else if (pano.activeControl == 'move-right') { pano.lon -= 1; }
-  else if (pano.activeControl == 'move-up') { pano.lat -= 1; }
-  else if (pano.activeControl == 'move-down') { pano.lat += 1; }
-  else if (pano.activeControl == 'zoom-in') {
+  if (Pano.activeControl == 'move-left') { Pano.lon += 1; }
+  else if (Pano.activeControl == 'move-right') { Pano.lon -= 1; }
+  else if (Pano.activeControl == 'move-up') { Pano.lat -= 1; }
+  else if (Pano.activeControl == 'move-down') { Pano.lat += 1; }
+  else if (Pano.activeControl == 'zoom-in') {
     var fov = camera.fov - 1;
-    camera.fov = THREE.Math.clamp(fov, pano.fovMin, pano.fovMax);
+    camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
     camera.updateProjectionMatrix();
   }
-  else if (pano.activeControl == 'zoom-out') {
+  else if (Pano.activeControl == 'zoom-out') {
     var fov = camera.fov + 1;
-    camera.fov = THREE.Math.clamp(fov, pano.fovMin, pano.fovMax);
+    camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
     camera.updateProjectionMatrix();
   }
 
-  if (pano.autoRotate) { pano.lon -= 0.4; }
+  if (Pano.autoRotate) { Pano.lon -= 0.4; }
 
-  if (pano.lat > pano.latMax) { pano.lat = pano.latMax; }
-  if (pano.lat < -pano.latMax) { pano.lat = -pano.latMax; }
-  if (pano.lon < 0) { pano.lon += 360; }
-  if (pano.lon > 360) { pano.lon -= 360; }
+  if (Pano.lat > Pano.latMax) { Pano.lat = Pano.latMax; }
+  if (Pano.lat < -Pano.latMax) { Pano.lat = -Pano.latMax; }
+  if (Pano.lon < 0) { Pano.lon += 360; }
+  if (Pano.lon > 360) { Pano.lon -= 360; }
 
 }
 
@@ -288,11 +287,11 @@ function exitFullscreen ()
 function positionOverlays ()
 {
 
-  if (!pano.loadedScene) { return false; }
+  if (!Pano.loadedScene) { return false; }
 
-  for (var i = 0; i < pano.loadedScene.hotspots.length; i++) {
+  for (var i = 0; i < Pano.loadedScene.hotspots.length; i++) {
 
-    var hs = pano.loadedScene.hotspots[i];
+    var hs = Pano.loadedScene.hotspots[i];
     hs.animate();
 
   }
@@ -335,19 +334,19 @@ function panoClicked (e)
   } catch (err) {
   }
 
-  pano.active = true;
+  Pano.active = true;
 
   if (e.touches) {
-    pano.speedMultiplier = pano.touchSpeed;
+    Pano.speedMultiplier = Pano.touchSpeed;
   } else {
-    pano.speedMultiplier = pano.mouseSpeed;
+    Pano.speedMultiplier = Pano.mouseSpeed;
   }
 
-  pano.clickedX = mouse.x;
-  pano.clickedY = mouse.y;
+  Pano.clickedX = mouse.x;
+  Pano.clickedY = mouse.y;
 
-  pano.clickedLon = pano.lon;
-  pano.clickedLat = pano.lat;
+  Pano.clickedLon = Pano.lon;
+  Pano.clickedLat = Pano.lat;
 
 }
 
@@ -363,13 +362,13 @@ function eventMove (e)
     mouse.y = e.clientY || e.touches[0].clientY;
   } catch (err) {}
 
-  if (!pano.loadedScene) { return false; }
+  if (!Pano.loadedScene) { return false; }
 
-  if (pano.active) { pano.updatePosition(); }
+  if (Pano.active) { Pano.updatePosition(); }
 
-  for (var i = 0; i < pano.loadedScene.hotspots.length; i++) {
-    if (pano.loadedScene.hotspots[i].beingDragged) {
-      pano.loadedScene.hotspots[i].eventMove();
+  for (var i = 0; i < Pano.loadedScene.hotspots.length; i++) {
+    if (Pano.loadedScene.hotspots[i].beingDragged) {
+      Pano.loadedScene.hotspots[i].eventMove();
     }
   }
 
@@ -381,15 +380,15 @@ function eventStop (e)
 {
 
   //e.preventDefault(); // is this needed?
-  pano.activeControl = false;
+  Pano.activeControl = false;
   var clickTolerance = 2;
-  pano.active = false;
+  Pano.active = false;
 
-  for (var i = 0; i < pano.loadedScene.hotspots.length; i++) {
-    pano.loadedScene.hotspots[i].beingDragged = false;
+  for (var i = 0; i < Pano.loadedScene.hotspots.length; i++) {
+    Pano.loadedScene.hotspots[i].beingDragged = false;
   }
 
-  if ((Math.abs(pano.clickedX - mouse.x) <= clickTolerance) && (Math.abs(pano.clickedY - mouse.y) <= clickTolerance)) {
+  if ((Math.abs(Pano.clickedX - mouse.x) <= clickTolerance) && (Math.abs(Pano.clickedY - mouse.y) <= clickTolerance)) {
     eventClick(e);
   }
 
@@ -400,7 +399,7 @@ function eventStop (e)
 function eventWheel (e)
 {
   var fov = camera.fov + (event.deltaY * 0.05);
-  camera.fov = THREE.Math.clamp(fov, pano.fovMin, pano.fovMax);
+  camera.fov = THREE.Math.clamp(fov, Pano.fovMin, Pano.fovMax);
   camera.updateProjectionMatrix();
 }
 

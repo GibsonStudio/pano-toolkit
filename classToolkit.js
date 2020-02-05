@@ -194,26 +194,26 @@ function Toolkit (args) {
 
 
   this.StoreInfo = function () {
-    document.getElementById("debugLon").value = pano.lon.toFixed(2);
-    document.getElementById("debugLat").value = pano.lat.toFixed(2);
+    document.getElementById("debugLon").value = Pano.lon.toFixed(2);
+    document.getElementById("debugLat").value = Pano.lat.toFixed(2);
   }
 
 
   this.SetScenePosition = function () {
-    pano.loadedScene.lon = parseFloat(pano.lon.toFixed(2));
-    pano.loadedScene.lat = parseFloat(pano.lat.toFixed(2));
+    Pano.loadedScene.lon = parseFloat(Pano.lon.toFixed(2));
+    Pano.loadedScene.lat = parseFloat(Pano.lat.toFixed(2));
     new Message({ text:"Scene position updated OK" });
   }
 
 
   this.EditPanoInfo = function () {
 
-    var data = "Loaded Scene ID: " + pano.loadedScene.id + "\n";
-    data +='lon="' + pano.lon.toFixed(2) + '" ';
-    data += 'lat="' + pano.lat.toFixed(2) + '"';
+    var data = "Loaded Scene ID: " + Pano.loadedScene.id + "\n";
+    data +='lon="' + Pano.lon.toFixed(2) + '" ';
+    data += 'lat="' + Pano.lat.toFixed(2) + '"';
 
     var panoPopup = new Popup({ title:"Pano Info", width:"400px" });
-    panoPopup.addField({ label:"name:", id:"name", value:pano.name });
+    panoPopup.addField({ label:"name:", id:"name", value:Pano.name });
     panoPopup.addField({ label:"info", id:"info", type:"textarea", value:data });
     panoPopup.addButton({ text:"Update", callback:"Toolkit.UpdatePano" });
     panoPopup.addButton({ type:"cancel" });
@@ -225,7 +225,7 @@ function Toolkit (args) {
   this.UpdatePano = function (args) {
 
     if (args.name) {
-      pano.name = args.name;
+      Pano.name = args.name;
       new Message({ text:"Pano updated OK" });
     }
 
@@ -234,21 +234,21 @@ function Toolkit (args) {
 
   this.AddSceneLinks = function () {
 
-    pano.sortScenes();
+    Pano.sortScenes();
 
     var cont = document.getElementById("debugSceneLinks");
     cont.innerHTML = "";
 
-    for (var i = 0; i < pano.scenes.length; i++) {
+    for (var i = 0; i < Pano.scenes.length; i++) {
 
       var el = document.createElement("div");
       el.style.setProperty("font-size", "12px");
       el.style.setProperty("padding", "4px");
       el.style.setProperty("cursor", "pointer");
-      el.innerHTML = pano.scenes[i].id + ' (' + pano.scenes[i].texture + ')';
+      el.innerHTML = Pano.scenes[i].id + ' (' + Pano.scenes[i].texture + ')';
 
-      el.sceneId = pano.scenes[i].id;
-      el.onclick = function () { pano.load(this.sceneId); }
+      el.sceneId = Pano.scenes[i].id;
+      el.onclick = function () { Pano.load(this.sceneId); }
 
       cont.appendChild(el);
 
@@ -260,11 +260,11 @@ function Toolkit (args) {
   this.ShowEditSceneDialog = function () {
 
     var editScenePopup = new Popup({ title:"Edit Scene" });
-    editScenePopup.addField({ label:"ID", id:"id", value:pano.loadedScene.id });
-    editScenePopup.addField({ label:"Image", id:"texture", value:pano.loadedScene.texture });
-    editScenePopup.addField({ label:"Lon", id:"lon", type:"number", value:pano.loadedScene.lon });
-    editScenePopup.addField({ label:"Lat", id:"lat", type:"number", value:pano.loadedScene.lat });
-    editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:pano.loadedScene.isHomeScene });
+    editScenePopup.addField({ label:"ID", id:"id", value:Pano.loadedScene.id });
+    editScenePopup.addField({ label:"Image", id:"texture", value:Pano.loadedScene.texture });
+    editScenePopup.addField({ label:"Lon", id:"lon", type:"number", value:Pano.loadedScene.lon });
+    editScenePopup.addField({ label:"Lat", id:"lat", type:"number", value:Pano.loadedScene.lat });
+    editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:Pano.loadedScene.isHomeScene });
     editScenePopup.addButton({ text:"Save", callback:"Toolkit.EditScene" });
     editScenePopup.addButton({ type:"cancel", text:"Cancel" });
     editScenePopup.show();
@@ -275,17 +275,17 @@ function Toolkit (args) {
   this.EditScene = function (args) {
 
     var args = args || {};
-    pano.loadedScene.id = args.id ? args.id : pano.loadedScene.id;
-    pano.loadedScene.texture = args.texture ? args.texture : pano.loadedScene.texture;
-    pano.loadedScene.lon = args.lon ? parseFloat(args.lon) : pano.loadedScene.lon;
-    pano.loadedScene.lat = args.lat ? parseFloat(args.lat) : pano.loadedScene.lat;
+    Pano.loadedScene.id = args.id ? args.id : Pano.loadedScene.id;
+    Pano.loadedScene.texture = args.texture ? args.texture : Pano.loadedScene.texture;
+    Pano.loadedScene.lon = args.lon ? parseFloat(args.lon) : Pano.loadedScene.lon;
+    Pano.loadedScene.lat = args.lat ? parseFloat(args.lat) : Pano.loadedScene.lat;
 
-    if (args.isHomeScene) { pano.clearHomeScene(); }
-    pano.loadedScene.isHomeScene = args.isHomeScene ? args.isHomeScene : false;
+    if (args.isHomeScene) { Pano.clearHomeScene(); }
+    Pano.loadedScene.isHomeScene = args.isHomeScene ? args.isHomeScene : false;
 
     // reload scene?
     this.AddSceneLinks();
-    pano.loadedScene.loadTexture();
+    Pano.loadedScene.loadTexture();
 
   }
 
@@ -300,7 +300,7 @@ function Toolkit (args) {
     var myLat = args.lat ? parseFloat(args.lat) : 0;
 
     var panoScene = new PanoScene({ id:myID, texture:myImage, lon:myLon, lat:myLat });
-    pano.scenes.push(panoScene);
+    Pano.scenes.push(panoScene);
 
     this.AddSceneLinks();
 
@@ -309,14 +309,14 @@ function Toolkit (args) {
 
   this.DeleteCurrentScene = function () {
 
-    var sceneCount = pano.scenes.length;
+    var sceneCount = Pano.scenes.length;
     if (sceneCount < 2) { return false; }
 
-    var sIndex = pano.scenes.indexOf(pano.loadedScene);
+    var sIndex = Pano.scenes.indexOf(Pano.loadedScene);
 
-    pano.scenes.splice(sIndex, 1);
+    Pano.scenes.splice(sIndex, 1);
     this.AddSceneLinks();
-    pano.scenes[0].load();
+    Pano.scenes[0].load();
 
   }
 
@@ -328,17 +328,17 @@ function Toolkit (args) {
      var myID = args.id ? args.id : "hs-" + Math.round(Math.random() * 100000);
      var myLink = args.link ? args.link : "";
      var myTitle = args.title ? args.title : "";
-     var myLon = args.lon ? parseFloat(args.lon) : 180 - pano.lon;
-     var myLat = args.lat ? parseFloat(args.lat) : -pano.lat;
+     var myLon = args.lon ? parseFloat(args.lon) : 180 - Pano.lon;
+     var myLat = args.lat ? parseFloat(args.lat) : -Pano.lat;
 
-     pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, lon:myLon, lat:myLat }, true);
+     Pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, lon:myLon, lat:myLat }, true);
 
   }
 
 
   this.ShowXML = function () {
 
-    var xml = pano.getXML();
+    var xml = Pano.getXML();
     var xmlPopup = new Popup({ title:"XML data for scenes.xml", width:"500px" });
     xmlPopup.addField({ label:"xml", id:"xml", type:"textarea", value:xml, height:"300px" });
     xmlPopup.addButton({ type:"cancel" });
@@ -351,13 +351,13 @@ function Toolkit (args) {
 
     var id = args.id ? args.id : "";
     var title = args.title ? args.title : "";
-    var originalID = pano.clickedHotspot.id;
+    var originalID = Pano.clickedHotspot.id;
 
-    pano.clickedHotspot.id = id;
-    pano.clickedHotspot.link = args.link ? args.link : "";
-    pano.clickedHotspot.title = title;
-    pano.clickedHotspot.sceneLon = args.sceneLon ? parseFloat(args.sceneLon) : 0;
-    pano.clickedHotspot.sceneLat = args.sceneLat ? parseFloat(args.sceneLat) : 0;
+    Pano.clickedHotspot.id = id;
+    Pano.clickedHotspot.link = args.link ? args.link : "";
+    Pano.clickedHotspot.title = title;
+    Pano.clickedHotspot.sceneLon = args.sceneLon ? parseFloat(args.sceneLon) : 0;
+    Pano.clickedHotspot.sceneLat = args.sceneLat ? parseFloat(args.sceneLat) : 0;
 
     // update html element
     var el = document.getElementById("overlay-" + originalID);
@@ -368,13 +368,13 @@ function Toolkit (args) {
 
 
   this.DeleteHotspot = function (args) {
-    pano.clickedHotspot.delete();
+    Pano.clickedHotspot.delete();
   }
 
 
   this.ShowHotspotXML = function () {
 
-    var xml = pano.clickedHotspot.getXML();
+    var xml = Pano.clickedHotspot.getXML();
     var xmlPopup = new Popup({ title:"XML data for hotspot", width:"500px" });
     xmlPopup.addField({ label:"xml", id:"xml", type:"textarea", value:xml, height:"300px" });
     xmlPopup.addButton({ type:"cancel" });
@@ -384,7 +384,7 @@ function Toolkit (args) {
 
 
   this.HotspotClicked = function () {
-    pano.clickedHotspot.clicked();
+    Pano.clickedHotspot.clicked();
   }
 
 
@@ -402,21 +402,21 @@ function Toolkit (args) {
 
   this.Save = function () {
 
-      var myXML = pano.getXML();
+      var myXML = Pano.getXML();
 
       $.ajax({
         url:"php/savePano.php",
         type:"POST",
-        data: { id:pano.id, name:pano.name, xml:myXML }
+        data: { id:Pano.id, name:Pano.name, xml:myXML }
       }).done(function (data) {
 
         var data = JSON.parse(data);
 
         if (data.insertID) {
-          pano.id = data.insertID;
+          Pano.id = data.insertID;
           new Message({ text:"New pano saved OK (" + data.insertID + ")" });
         } else if (data.result == "OK") {
-          new Message({ text:"Pano " + pano.id + " updated OK." });
+          new Message({ text:"Pano " + Pano.id + " updated OK." });
         } else {
           new Message({ text:data.result });
         }
@@ -453,11 +453,11 @@ function Toolkit (args) {
         new Message({ text:"ERROR: Pano not loaded." });
       } else {
 
-        pano.init();
+        Pano.init();
         var data = JSON.parse(data);
-        pano.id = data.id;
-        pano.name = data.name;
-        pano.scenes = [];
+        Pano.id = data.id;
+        Pano.name = data.name;
+        Pano.scenes = [];
         parseXML(data.xml);
 
       }
@@ -485,11 +485,11 @@ function Toolkit (args) {
 
     this.ImagePicker.close();
 
-    if (pano.loadedScene) {
+    if (Pano.loadedScene) {
 
-      pano.loadedScene.texture = img;
+      Pano.loadedScene.texture = img;
       this.AddSceneLinks();
-      pano.loadedScene.loadTexture();
+      Pano.loadedScene.loadTexture();
 
     }
 
@@ -536,22 +536,22 @@ function Toolkit (args) {
 
   this.DeletePano = function () {
 
-    if (!pano.id) {
+    if (!Pano.id) {
       new Message({ text:"ERROR: No database panorama loaded." });
     } else {
 
       $.ajax({
         url:"php/deletePano.php",
         type:"POST",
-        data: { id:pano.id }
+        data: { id:Pano.id }
       }).done(function (data) {
 
         if (data == "OK") {
 
           new Message ({ text:"Panorama deleted OK. Loading default...." });
-          pano.id = 0;
-          pano.name = "";
-          pano.scenes = [];
+          Pano.id = 0;
+          Pano.name = "";
+          Pano.scenes = [];
           loadXML();
           Toolkit.RefreshSaved();
 
@@ -581,7 +581,7 @@ function Toolkit (args) {
     $.ajax({
       url:"php/publish.php",
       type:"POST",
-      data:{ id:pano.id, filename:pano.name }
+      data:{ id:Pano.id, filename:Pano.name }
     }).done(function (data) {
 
       var data = JSON.parse(data);

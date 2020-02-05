@@ -1,20 +1,13 @@
 
 
 
-//TODO: reorganize scripts to make it more logical
-
 //TODO: add 'jump to scene' menu when published
 
-//TODO: make debugPano into a class?
 
 //TODO: rename some PHP scripts, e.g. getSavedPanoramas.php to getSaved.php
-//TODO: Add Scene, make default.jpg default image name
 //TODO: add confirm dialog to Toolkit.DeleteCurrentScene()
 
 //bugs
-//* error if clicking "Navigate To" after changing data
-//* panoScene.load is not a function on published scene - may be OK?
-//* Scene > Change Image is not working
 
 
 
@@ -101,7 +94,7 @@ function Pano (args) {
     this.lon = this.clickedLon + (dx * this.speedMultiplier);
 
     var dy = this.clickedY - mouse.y;
-    this.lat = pano.clickedLat + (dy * this.speedMultiplier);
+    this.lat = Pano.clickedLat + (dy * this.speedMultiplier);
     this.lat = Math.max(Math.min(this.lat, this.latMax), -this.latMax);
 
   }
@@ -110,9 +103,9 @@ function Pano (args) {
   this.getPosition = function (thisLon, thisLat) {
 
     var p = {};
-    var hL = Math.cos(THREE.Math.degToRad(thisLat)) * pano.length;
+    var hL = Math.cos(THREE.Math.degToRad(thisLat)) * Pano.length;
     p.x = -Math.sin(THREE.Math.degToRad(thisLon)) * hL;
-    p.y = Math.sin(THREE.Math.degToRad(thisLat)) * pano.length;
+    p.y = Math.sin(THREE.Math.degToRad(thisLat)) * Pano.length;
     p.z = Math.cos(THREE.Math.degToRad(thisLon)) * hL;
     return p;
 
@@ -244,7 +237,7 @@ function PanoScene (args) {
 
     this.loader = new THREE.TextureLoader().load('img\\' + this.texture, function (texture) {
       myThis.tx = texture;
-      pano.material.map = myThis.tx;
+      Pano.material.map = myThis.tx;
       myThis.ini({ clickedHotspot:clickedHotspot });
       $("#loading-message").hide();
     });
@@ -273,7 +266,7 @@ function PanoScene (args) {
     if (!this.tx) {
       this.loadTexture({ clickedHotspot:clickedHotspot });
     } else {
-      pano.material.map = this.tx;
+      Pano.material.map = this.tx;
       this.ini({ clickedHotspot:clickedHotspot });
     }
 
@@ -287,20 +280,20 @@ function PanoScene (args) {
     var clickedHotspot = args.clickedHotspot || {};
 
     // move to default position
-    pano.lat = this.lat;
-    pano.lon = this.lon;
+    Pano.lat = this.lat;
+    Pano.lon = this.lon;
 
     // override position with hotspot data?
-    if (clickedHotspot.sceneLon) { pano.lon = clickedHotspot.sceneLon; }
-    if (clickedHotspot.sceneLat) { pano.lat = clickedHotspot.sceneLat; }
+    if (clickedHotspot.sceneLon) { Pano.lon = clickedHotspot.sceneLon; }
+    if (clickedHotspot.sceneLat) { Pano.lat = clickedHotspot.sceneLat; }
 
     // reset zoom (camera fov)
-    camera.fov = pano.fovIni;
+    camera.fov = Pano.fovIni;
     camera.updateProjectionMatrix();
 
     this.addHotspots();
 
-    pano.loadedScene = this;
+    Pano.loadedScene = this;
 
   }
 
@@ -359,7 +352,7 @@ function PanoHotspot (args) {
   this.latMax = args.latMax || 85;
   this.speedMultiplier = 0.1;
 
-  var p = pano.getPosition(this.lon, this.lat);
+  var p = Pano.getPosition(this.lon, this.lat);
   this.position = [p.x, p.y, p.z];
 
   this.addToOverlays = function () {
@@ -413,9 +406,9 @@ function PanoHotspot (args) {
   this.delete = function () {
 
     // remove object
-    for (var i = 0; pano.loadedScene.hotspots.length; i++) {
-      if (pano.loadedScene.hotspots[i] == this) {
-        pano.loadedScene.hotspots.splice(i, 1);
+    for (var i = 0; Pano.loadedScene.hotspots.length; i++) {
+      if (Pano.loadedScene.hotspots[i] == this) {
+        Pano.loadedScene.hotspots.splice(i, 1);
         break;
       }
     }
@@ -429,7 +422,7 @@ function PanoHotspot (args) {
 
 
   this.clicked = function () {
-    pano.load(this.link, { clickedHotspot:this });
+    Pano.load(this.link, { clickedHotspot:this });
   }
 
 
@@ -449,7 +442,7 @@ function PanoHotspot (args) {
 
       if (debugMode) {
 
-        pano.clickedHotspot = this;
+        Pano.clickedHotspot = this;
         var hp = new Popup({ id:"hotspot-options", title:"Hotspot Options:" });
         hp.addField({ label:"ID", id:"id", value:this.id });
         hp.addField({ label:"Link", id:"link", value:this.link });
@@ -465,7 +458,7 @@ function PanoHotspot (args) {
         hp.show();
 
       } else {
-        pano.load(this.link, { clickedHotspot:this });
+        Pano.load(this.link, { clickedHotspot:this });
       }
 
     }
@@ -503,7 +496,7 @@ function PanoHotspot (args) {
 
     // is it being dragged?
     if (this.beingDragged) {
-      var p = pano.getPosition(this.lon, this.lat);
+      var p = Pano.getPosition(this.lon, this.lat);
       this.position = [p.x, p.y, p.z];
     }
 
@@ -516,7 +509,7 @@ function PanoHotspot (args) {
   // positions the html element on the screen
   this.positionMyElement = function () {
 
-    var pos = pano.toScreenPosition(this.position, camera);
+    var pos = Pano.toScreenPosition(this.position, camera);
     var xPos = pos.x - (50 / 2);
     var yPos = pos.y - (50 / 2);
     $('#overlay-' + this.id).css({ 'left': xPos + 'px', 'top': yPos + 'px' });
