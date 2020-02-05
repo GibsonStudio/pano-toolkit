@@ -7,10 +7,13 @@
 
 //TODO: make debugPano into a class?
 
+//TODO: rename some PHP scripts, e.g. getSavedPanoramas.php to getSaved.php
+//TODO: Add Scene, make default.jpg default image name
+
 
 //bugs
-
-
+//* error if clicking "Navigate To" after changing data
+//* panoScene.load is not a function on published scene
 
 function Pano (args) {
 

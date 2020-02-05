@@ -39,7 +39,7 @@ if ($submitted) {
       echo '<div class="error">ERROR: Unknown error.</div>';
     }
 
-    echo '<button onclick="parent.debugCloseUpload()">OK</button>';
+    echo '<button onclick="parent.Toolkit.CloseUploadDialog()">OK</button>';
 
   }
 
@@ -57,6 +57,6 @@ if ($submitted) {
 
 <div style="padding=top:20px;">
   <button onclick="document.getElementById('upload-form').submit()">Upload</button>
-  <button onclick="parent.debugCloseUpload()">Cancel</button>
+  <button onclick="parent.Toolkit.CloseUploadDialog()">Cancel</button>
 </div>
 <?php } ?>

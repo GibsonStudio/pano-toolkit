@@ -1,7 +1,7 @@
 
 
 
-
+/*
 function loadFromDatabase (panoID)
 {
 
@@ -30,9 +30,11 @@ function loadFromDatabase (panoID)
   });
 
 }
+*/
 
 
 
+/*
 function debugRefreshSaved ()
 {
 
@@ -44,10 +46,10 @@ function debugRefreshSaved ()
   });
 
 }
+*/
 
 
-
-
+/*
 function debugChangeImage ()
 {
 
@@ -55,9 +57,9 @@ function debugChangeImage ()
   imagePicker.show();
 
 }
+*/
 
-
-
+/*
 function debugChangeSceneImage (img)
 {
 
@@ -72,10 +74,11 @@ function debugChangeSceneImage (img)
   }
 
 }
+*/
 
 
 
-
+/*
 function debugUploadImage ()
 {
 
@@ -89,9 +92,9 @@ function debugCloseUpload ()
 {
   uploadPopup.close();
 }
+*/
 
-
-
+/*
 function debugDeletePano ()
 {
 
@@ -138,8 +141,11 @@ function debugDeleteConfirmed ()
   }
 
 }
+*/
 
 
+
+/*
 function debugPublish ()
 {
 
@@ -168,12 +174,14 @@ function debugPublish ()
   });
 
 }
+*/
 
 
 
 
 
 
+/*
 function debugSave ()
 {
 
@@ -199,3 +207,4 @@ function debugSave ()
     });
 
 }
+*/

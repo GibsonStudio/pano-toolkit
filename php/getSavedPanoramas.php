@@ -15,7 +15,7 @@ foreach ($rows as $row) {
   $name = $row['name'] ? $row['name'] : 'blank';
 
   $html .= '<div style="font-size:12px; padding:4px; cursor:pointer; background-color:#e2e2e2; margin-bottom:4px;" ';
-  $html .= 'onclick="loadFromDatabase('.$id.')">'.$name.'</div>';
+  $html .= 'onclick="Toolkit.LoadFromDatabase('.$id.')">'.$name.'</div>';
 
 }
 

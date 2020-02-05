@@ -1,5 +1,7 @@
 
-var popup;
+var popup; // TODO chnage to Popup
+var pano; // TODO change to Pano
+var Toolkit;
 
 // if debugMode = true, the panorama can be edited
 var debugMode = (typeof debugMode === 'undefined') ? false : debugMode;
@@ -12,10 +14,11 @@ if (debugMode) {
 
   var h = '<script src="classPopup.js"></script>';
   h += '<script src="classMessage.js"></script>';
-  h += '<script src="debugPano.js"></script>';
+  h += '<script src="debugPano.js"></script>'; //TODO move all of this to toolkit
+  h += '<script src="classToolkit.js"></script>';
 
   if (onlineMode) {
-    h += '<script src="libOnline.js"></script>';
+    //h += '<script src="libOnline.js"></script>';
     h += '<script src="classUpload.js"></script>';
     h += '<script src="classImagePicker.js"></script>';
   }
@@ -34,13 +37,20 @@ mouse.x = 0;
 mouse.y = 0;
 
 var container, camera, scene, renderer, mesh;
-var pano = new Pano(); // global ref must me called pano
 
 
 
 
 
 
+
+function initVars ()
+{
+
+  pano = new Pano(); // global ref must me called pano, TODO: change this to Pano
+  if (debugMode) { Toolkit = new Toolkit(); }
+
+}
 
 
 

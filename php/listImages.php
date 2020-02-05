@@ -19,7 +19,7 @@ $files = scandir($imageDir);
 foreach ($files as $f) {
   if (is_file("..\\img\\".$f)) {
     $h = '<img class="pickerImage" src="'.$imageDir.$f.'" title="'.$f.'" alt="'.$f.'" ';
-    $h .= 'onclick="parent.debugChangeSceneImage(\''.$f.'\')" />';
+    $h .= 'onclick="parent.Toolkit.ChangeImage(\''.$f.'\')" />';
     echo $h;
   }
 }

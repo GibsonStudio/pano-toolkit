@@ -10,6 +10,7 @@
 // v1.32 20/1/2020 - rewrote getData to retun standard object and use dots, e.g. args.id
 // v1.33 21/1/2020 - added args.accept - for file type inputs
 // v1.34 30/1/2020 - made checkboxes properly display thier initial value
+// v1.35 5/2/2020 - allowed this.callback to call a function, if this.callback contains ")"
 
 // Buttons:
 // If no butttons are specified, ther default Submit and Cancel buttons are added
@@ -347,7 +348,13 @@ function Popup (args) {
       else if (this.callback == "submit") {
         this.parent.submit();
       } else {
-        window[this.callback](this.parent.getData());
+
+        if (this.callback.indexOf(")") > 0) {
+          eval(this.callback);
+        } else {
+          window[this.callback](this.parent.getData());
+        }
+
         if (this.parent.closeOnSubmit) { this.parent.close(); }
       }
 

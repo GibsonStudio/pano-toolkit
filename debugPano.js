@@ -104,10 +104,10 @@ function iniDebug () {
   h += '<button class="debugButton" onclick="debugGenerateXML();">Get XML</button>';
 
   if (onlineMode) {
-    h += '<button class="debugButton" onclick="debugSave();">Save</button>';
-    h += '<button class="debugButton" onclick="debugDeletePano();">Delete</button>';
-    h += '<button class="debugButton" onclick="debugUploadImage();">Upload Image</button>';
-    h += '<button class="debugButton" onclick="debugPublish();">Publish</button>';
+    h += '<button class="debugButton" onclick="Toolkit.Save();">Save</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowDeleteDialog();">Delete</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowUploadDialog();">Upload Image</button>';
+    h += '<button class="debugButton" onclick="Toolkit.Publish();">Publish</button>';
   }
 
   h += '</div>';
@@ -116,7 +116,7 @@ function iniDebug () {
   h += '<div style="font-size:12px; font-weight:bold;">Scene</div>';
   h += '<button class="debugButton" onclick="addScenePopup.show();">Add</button>';
   h += '<button class="debugButton" onclick="editCurrentScene();">Edit</button>';
-  if (onlineMode) { h += '<button class="debugButton" onclick="debugChangeImage();">Change Image</button>'; }
+  if (onlineMode) { h += '<button class="debugButton" onclick="Toolkit.ShowImagePicker();">Change Image</button>'; }
   h += '<button class="debugButton" onclick="debugSetScenePosition();">Set Position</button>';
   h += '<button class="debugButton" onclick="debugDeleteCurrentScene();">Delete Current</button>';
   h += '<button class="debugButton" onclick="addHotspotPopup.show();">Add Hotspot</button>';
@@ -136,7 +136,7 @@ function iniDebug () {
 
 
 
-  //   debug container
+  //   load container
   var el = document.createElement("div");
   el.id = "debugLoad";
 
@@ -152,7 +152,7 @@ function iniDebug () {
 
   var h = '<div style="font-size:12px; font-weight:bold;">Saved Panoramas:</div>';
   h += '<div id="savedPanoramas" style="height:140px; overflow-y:auto; background-color:#fcfcfc; margin-bottom:10px; border:1px solid #666666;"></div>';
-  h += '<button class="debugButton" onclick="debugRefreshSaved();">Refresh</button>';
+  h += '<button class="debugButton" onclick="Toolkit.RefreshSaved();">Refresh</button>';
 
   el.innerHTML = h;
 
@@ -188,7 +188,7 @@ function debugLoadToggle ()
   debug.hidden = true;
 
   if (!debugLoad.hidden) {
-    debugRefreshSaved();
+    Toolkit.RefreshSaved();
   }
 
 }
