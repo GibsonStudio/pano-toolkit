@@ -479,12 +479,12 @@ function Toolkit (args) {
         new Message({ text:"ERROR: Pano not loaded." });
       } else {
 
-        Pano.init();
+        Pano.initDBLoad();
         var data = JSON.parse(data);
         Pano.id = data.id;
         Pano.name = data.name;
         Pano.scenes = [];
-        parseXML(data.xml);
+        Pano.parseXML(data.xml);
 
       }
 

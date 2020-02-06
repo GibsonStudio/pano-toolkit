@@ -2,8 +2,8 @@
 
 
 //TODO: add 'jump to scene' menu when published
-//TODO: move functions from lib.js
-//TODO, move lib.js globals to Pano? - , container, camera, scene, renderer, mesh not used in global context
+
+
 
 //bugs
 
@@ -42,6 +42,10 @@ function Pano (args) {
   this.WIDTH = args.WIDTH || 980; // these display sizes are used if resizeCanvas = false;
   this.HEIGHT = args.HEIGHT || 524; // size for Storyline, 980 x 524
 
+  this.mouse = {};
+  this.mouse.x = 0;
+  this.mouse.y = 0;
+
 
   this.container = false;
   this.camera = false;
@@ -49,8 +53,73 @@ function Pano (args) {
   this.renderer = false;
 
 
+  this.init = function (loadDatabaseID) {
 
-  this.init = function () {
+    var loadDatabaseID = loadDatabaseID || false;
+
+    if (this.resize) {
+      resizeMe();
+    } else {
+      $('#my-container').width(this.WIDTH);
+      $('#my-container').height(this.HEIGHT);
+    }
+
+    if (debugMode) { Toolkit.Init(); }
+
+    this.container = document.getElementById('my-canvas-container');
+
+    this.scene = new THREE.Scene();
+
+    this.camera = new THREE.PerspectiveCamera( this.fovIni, this.WIDTH / this.HEIGHT, 1, 1100);
+    this.camera.target = new THREE.Vector3(0, 0, 0);
+
+    this.renderer = new THREE.WebGLRenderer();
+    this.renderer.setSize(Pano.WIDTH, Pano.HEIGHT);
+    this.renderer.domElement.id = 'my-canvas';
+
+    this.container.appendChild(Pano.renderer.domElement);
+
+    // add environment sphere and apply texture
+    var geometry = new THREE.SphereBufferGeometry(this.length, 60, 40);
+    geometry.scale(-1, 1, 1);
+
+    var texture = new THREE.Texture();
+    this.material = new THREE.MeshBasicMaterial({ map:texture });
+    this.mesh = new THREE.Mesh( geometry, this.material );
+    this.mesh.rotation.y = THREE.Math.degToRad(90); // so it starts in the center
+
+    this.scene.add(this.mesh);
+
+    // window resize event
+    if (this.resize) { window.addEventListener('resize', function (e) { resizeMe(); }); }
+
+    var canvasEl = document.getElementById("my-canvas-container");
+
+    // mouse event handlers
+    canvasEl.addEventListener('mousedown', function (e) { Pano.clicked(e); });
+    document.addEventListener('mousemove', function (e) { Pano.eventMove(e); });
+    document.addEventListener('mouseup', function (e) { Pano.eventStop(e); });
+    document.addEventListener('wheel', function (e) { Pano.eventWheel(e); });
+
+    // touch event handlers
+    canvasEl.addEventListener('touchstart', Pano.clicked);
+    canvasEl.addEventListener('touchmove', Pano.eventMove);
+    canvasEl.addEventListener('touchend', Pano.eventStop);
+
+    if (loadDatabaseID) {
+      Toolkit.LoadFromDatabase(loadDatabaseID);
+    } else {
+      this.loadXML();
+    }
+
+    this.animate();
+
+  }
+
+
+  this.initDBLoad = function () {
+
+    console.log("init");
 
     this.id = 0;
     this.name = "";
@@ -68,6 +137,123 @@ function Pano (args) {
 
     var panoScene = this.getSceneById(panoSceneID);
     panoScene.load({ clickedHotspot:clickedHotspot });
+
+  }
+
+
+  this.loadXML = function () {
+
+    var myThis = this;
+
+    $.ajax({
+      url:"scenes.xml",
+      type:"GET",
+      dataType:"xml"
+    }).done(function (data) { myThis.parseXML(data); });
+  }
+
+
+  this.parseXML = function (data) {
+
+    console.log("XML loaded, parsing....");
+
+    $(data).find("scene").each(function () {
+
+      var id = $(this).attr("id");
+      var img = $(this).attr("image");
+      var lon = parseFloat($(this).attr("lon"));
+      var lat = parseFloat($(this).attr("lat"));
+      var isHomeScene = $(this).attr("isHomeScene");
+
+      var panoScene = new PanoScene({ id:id, texture:img, lon:lon, lat:lat, isHomeScene:isHomeScene });
+
+      $(this).find("hotspot").each(function () {
+
+        var args = {};
+        args.id = $(this).attr("id");
+        args.link = $(this).attr("link");
+        args.title = $(this).attr("title");
+        args.lon = parseFloat($(this).attr("lon"));
+        args.lat = parseFloat($(this).attr("lat"));
+        args.sceneLon = parseFloat($(this).attr("sceneLon"));
+        args.sceneLat = parseFloat($(this).attr("sceneLat"));
+
+        panoScene.addHotspot(args);
+
+      });
+
+      Pano.scenes.push(panoScene);
+
+    });
+
+    if (debugMode) { Toolkit.AddSceneLinks(); }
+
+    Pano.home();
+
+  }
+
+
+  this.animate = function () {
+
+    var myThis = this;
+
+    window.requestAnimationFrame(function () { myThis.animate(); });
+
+    this.checkControls();
+    this.positionCamera();
+
+    this.renderer.render(this.scene, this.camera);
+
+    this.positionOverlays();
+
+  }
+
+
+  this.checkControls = function () {
+
+    if (this.activeControl) { this.active = false; }
+
+    if (this.activeControl == 'move-left') { this.lon += 1; }
+    else if (this.activeControl == 'move-right') { this.lon -= 1; }
+    else if (this.activeControl == 'move-up') { this.lat -= 1; }
+    else if (this.activeControl == 'move-down') { this.lat += 1; }
+    else if (this.activeControl == 'zoom-in') {
+      var fov = this.camera.fov - 1;
+      this.camera.fov = THREE.Math.clamp(fov, this.fovMin, this.fovMax);
+      this.camera.updateProjectionMatrix();
+    }
+    else if (this.activeControl == 'zoom-out') {
+      var fov = this.camera.fov + 1;
+      this.camera.fov = THREE.Math.clamp(fov, this.fovMin, this.fovMax);
+      this.camera.updateProjectionMatrix();
+    }
+
+    if (this.autoRotate) { this.lon -= 0.4; }
+
+    if (this.lat > this.latMax) { this.lat = this.latMax; }
+    if (this.lat < -this.latMax) { this.lat = -this.latMax; }
+    if (this.lon < 0) { this.lon += 360; }
+    if (this.lon > 360) { this.lon -= 360; }
+
+  }
+
+
+  this.positionCamera = function () {
+    this.camera.rotation.set(0, toRads(this.lon), 0);
+    this.camera.rotateX(-toRads(this.lat));
+  }
+
+
+  this.positionOverlays = function () {
+
+    if (!this.loadedScene) { return false; }
+
+    for (var i = 0; i < this.loadedScene.hotspots.length; i++) {
+
+      var hs = this.loadedScene.hotspots[i];
+      hs.animate();
+
+    }
 
   }
 
@@ -97,10 +283,10 @@ function Pano (args) {
 
   this.updatePosition = function () {
 
-    var dx = mouse.x - this.clickedX;
+    var dx = this.mouse.x - this.clickedX;
     this.lon = this.clickedLon + (dx * this.speedMultiplier);
 
-    var dy = this.clickedY - mouse.y;
+    var dy = this.clickedY - this.mouse.y;
     this.lat = Pano.clickedLat + (dy * this.speedMultiplier);
     this.lat = Math.max(Math.min(this.lat, this.latMax), -this.latMax);
 
@@ -214,6 +400,78 @@ function Pano (args) {
   }
 
 
+  this.clicked = function (e) {
+
+    e.preventDefault();
+
+    // need to re-capture mouse for touch eventStop
+    try {
+      this.mouse.x = e.clientX || e.touches[0].clientX;
+      this.mouse.y = e.clientY || e.touches[0].clientY;
+    } catch (err) {
+    }
+
+    this.active = true;
+
+    if (e.touches) {
+      this.speedMultiplier = this.touchSpeed;
+    } else {
+      this.speedMultiplier = this.mouseSpeed;
+    }
+
+    this.clickedX = this.mouse.x;
+    this.clickedY = this.mouse.y;
+
+    this.clickedLon = this.lon;
+    this.clickedLat = this.lat;
+
+  }
+
+
+  this.eventMove = function (e) {
+
+    try {
+      this.mouse.x = e.clientX || e.touches[0].clientX;
+      this.mouse.y = e.clientY || e.touches[0].clientY;
+    } catch (err) {}
+
+    if (!this.loadedScene) { return false; }
+
+    if (this.active) { this.updatePosition(); }
+
+    for (var i = 0; i < this.loadedScene.hotspots.length; i++) {
+      if (this.loadedScene.hotspots[i].beingDragged) {
+        this.loadedScene.hotspots[i].eventMove();
+      }
+    }
+
+  }
+
+
+  this.eventStop = function (e) {
+
+    this.activeControl = false;
+    var clickTolerance = 2;
+    this.active = false;
+
+    for (var i = 0; i < this.loadedScene.hotspots.length; i++) {
+      this.loadedScene.hotspots[i].beingDragged = false;
+    }
+
+    //if ((Math.abs(this.clickedX - mouse.x) <= clickTolerance) && (Math.abs(this.clickedY - mouse.y) <= clickTolerance)) {
+    //  eventClick(e);
+    //}
+
+  }
+
+
+  this.eventWheel = function (e) {
+    var fov = this.camera.fov + (event.deltaY * 0.05);
+    this.camera.fov = THREE.Math.clamp(fov, this.fovMin, Pano.fovMax);
+    this.camera.updateProjectionMatrix();
+  }
+
+
 
 }
 
@@ -233,7 +491,6 @@ function PanoScene (args) {
   this.loader = false;
 
 
-
   this.loadTexture = function (args) {
 
     var args = args || {};
@@ -251,15 +508,12 @@ function PanoScene (args) {
   }
 
 
-
-
   this.getHotspotById = function (id) {
     for (var i = 0; i < this.hotspots.length; i++) {
       if (this.hotspots[i].id == id) { return this.hotspots[i]; }
     }
     return false;
   }
-
 
 
   this.load = function (args) {
@@ -277,7 +531,6 @@ function PanoScene (args) {
     }
 
   }
-
 
 
   this.ini = function (args) {
@@ -311,7 +564,6 @@ function PanoScene (args) {
     }
 
   }
-
 
 
   this.addHotspot = function (args, addToOverlays) {
@@ -361,6 +613,7 @@ function PanoHotspot (args) {
   var p = Pano.getPosition(this.lon, this.lat);
   this.position = [p.x, p.y, p.z];
 
+
   this.addToOverlays = function () {
 
     if (document.getElementById("overlay-" + this.id)) { return false; }
@@ -408,7 +661,6 @@ function PanoHotspot (args) {
   }
 
 
-
   this.delete = function () {
 
     // remove object
@@ -426,11 +678,9 @@ function PanoHotspot (args) {
   }
 
 
-
   this.clicked = function () {
     Pano.load(this.link, { clickedHotspot:this });
   }
-
 
 
   this.mouseUpMe = function (e) {
@@ -438,13 +688,13 @@ function PanoHotspot (args) {
     this.beingDragged = false;
 
     try {
-      mouse.x = e.clientX || e.touches[0].clientX;
-      mouse.y = e.clientY || e.touches[0].clientY;
+      Pano.mouse.x = e.clientX || e.touches[0].clientX;
+      Pano.mouse.y = e.clientY || e.touches[0].clientY;
     } catch (err) {
       console.log("Event ERROR");
     }
 
-    if (mouse.x == this.clickedX && mouse.y == this.clickedY) {
+    if (Pano.mouse.x == this.clickedX && Pano.mouse.y == this.clickedY) {
 
       if (debugMode) {
 
@@ -472,7 +722,6 @@ function PanoHotspot (args) {
   }
 
 
-
   this.mouseDownMe = function (e) {
 
     if (!debugMode) { return false; }
@@ -480,14 +729,14 @@ function PanoHotspot (args) {
     e.preventDefault();
 
     try {
-      mouse.x = e.clientX || e.touches[0].clientX;
-      mouse.y = e.clientY || e.touches[0].clientY;
+      Pano.mouse.x = e.clientX || e.touches[0].clientX;
+      Pano.mouse.y = e.clientY || e.touches[0].clientY;
     } catch (err) {
       console.log("Event ERROR");
     }
 
-    this.clickedX = mouse.x;
-    this.clickedY = mouse.y;
+    this.clickedX = Pano.mouse.x;
+    this.clickedY = Pano.mouse.y;
 
     this.clickedLon = this.lon;
     this.clickedLat = this.lat;
@@ -495,7 +744,6 @@ function PanoHotspot (args) {
     this.beingDragged = true;
 
   }
-
 
   // called by requestAnimationFrame in lib.js
   this.animate = function () {
@@ -510,8 +758,6 @@ function PanoHotspot (args) {
 
   }
 
-
-
   // positions the html element on the screen
   this.positionMyElement = function () {
 
@@ -523,13 +769,12 @@ function PanoHotspot (args) {
   }
 
 
-  // called by eventMove in lib.js
   this.eventMove = function () {
 
-    var dx = mouse.x - this.clickedX;
+    var dx = Pano.mouse.x - this.clickedX;
     this.lon = this.clickedLon + (dx * this.speedMultiplier);
 
-    var dy = this.clickedY - mouse.y;
+    var dy = this.clickedY - Pano.mouse.y;
     this.lat = this.clickedLat + (dy * this.speedMultiplier);
     this.lat = Math.max(Math.min(this.lat, this.latMax), -this.latMax);
 
