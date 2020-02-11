@@ -20,6 +20,7 @@ function Toolkit (args) {
   // Add Scene Popup
   this.AddScenePopup = new Popup({ title:"Add Scene" });
   this.AddScenePopup.addField({ label:"ID", id:"id" });
+  this.AddScenePopup.addField({ label:"Display Name", id:"displayName" });
   this.AddScenePopup.addField({ label:"Image", id:"image", value:"default.jpg" });
   this.AddScenePopup.addField({ label:"Lat", id:"lat", type:"number" });
   this.AddScenePopup.addField({ label:"Lon", id:"lon", type:"number" });
@@ -261,6 +262,7 @@ function Toolkit (args) {
 
     var editScenePopup = new Popup({ title:"Edit Scene" });
     editScenePopup.addField({ label:"ID", id:"id", value:Pano.loadedScene.id });
+    editScenePopup.addField({ label:"Display Name", id:"displayName", value:Pano.loadedScene.displayName });
     editScenePopup.addField({ label:"Image", id:"texture", value:Pano.loadedScene.texture });
     editScenePopup.addField({ label:"Lon", id:"lon", type:"number", value:Pano.loadedScene.lon });
     editScenePopup.addField({ label:"Lat", id:"lat", type:"number", value:Pano.loadedScene.lat });
@@ -276,6 +278,7 @@ function Toolkit (args) {
 
     var args = args || {};
     Pano.loadedScene.id = args.id ? args.id : Pano.loadedScene.id;
+    Pano.loadedScene.displayName = args.displayName ? args.displayName : Pano.loadedScene.displayName;
     Pano.loadedScene.texture = args.texture ? args.texture : Pano.loadedScene.texture;
     Pano.loadedScene.lon = args.lon ? parseFloat(args.lon) : Pano.loadedScene.lon;
     Pano.loadedScene.lat = args.lat ? parseFloat(args.lat) : Pano.loadedScene.lat;
@@ -295,11 +298,12 @@ function Toolkit (args) {
     var args = args || {};
 
     var myID = args.id ? args.id : "scene-" + Math.round(Math.random() * 100000);
+    var myDisplayName = args.displayName ? args.displayName : "";
     var myImage = args.image ? args.image : "";
     var myLon = args.lon ? parseFloat(args.lon) : 0;
     var myLat = args.lat ? parseFloat(args.lat) : 0;
 
-    var panoScene = new PanoScene({ id:myID, texture:myImage, lon:myLon, lat:myLat });
+    var panoScene = new PanoScene({ id:myID, displayName:myDisplayName, texture:myImage, lon:myLon, lat:myLat });
     Pano.scenes.push(panoScene);
 
     this.AddSceneLinks();

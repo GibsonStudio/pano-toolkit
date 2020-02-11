@@ -43,7 +43,9 @@ function ToggleHelp () {
 
 
 
-
+function toggleMenu () {
+  $("#pano-menu").toggle();
+}
 
 
 

@@ -1,9 +1,12 @@
 
 
+//TODO: add displayName to scene properties, use this in pano-menu
 
-//TODO: add 'jump to scene' menu when published
+//TODO: toolkit mode, when editing a displayName, pano-menu needs to update
 
+//TODO, remove popup global objects and build popups in showPopup function
 
+//TODO: make panos publish to subfolders - use pano name for folder name
 
 //bugs
 
@@ -160,12 +163,13 @@ function Pano (args) {
     $(data).find("scene").each(function () {
 
       var id = $(this).attr("id");
+      var displayName = $(this).attr("displayName");
       var img = $(this).attr("image");
       var lon = parseFloat($(this).attr("lon"));
       var lat = parseFloat($(this).attr("lat"));
       var isHomeScene = $(this).attr("isHomeScene");
 
-      var panoScene = new PanoScene({ id:id, texture:img, lon:lon, lat:lat, isHomeScene:isHomeScene });
+      var panoScene = new PanoScene({ id:id, displayName:displayName, texture:img, lon:lon, lat:lat, isHomeScene:isHomeScene });
 
       $(this).find("hotspot").each(function () {
 
@@ -187,6 +191,27 @@ function Pano (args) {
     });
 
     if (debugMode) { Toolkit.AddSceneLinks(); }
+
+    // add menu links
+    var cont = document.getElementById("pano-menu");
+    cont.innerHTML = "";
+
+    for (var i = 0; i < Pano.scenes.length; i++) {
+
+      var el = document.createElement("div");
+      el.style.setProperty("font-size", "12px");
+      el.style.setProperty("padding", "4px");
+      el.style.setProperty("cursor", "pointer");
+      el.innerHTML = Pano.scenes[i].displayName;
+
+      el.sceneId = Pano.scenes[i].id;
+      el.onclick = function () { Pano.load(this.sceneId); }
+
+      if (Pano.scenes[i].displayName) {
+        cont.appendChild(el);
+      }
+
+    }
 
     Pano.home();
 
@@ -339,6 +364,7 @@ function Pano (args) {
 
       var sceneTag = '<scene id="' + s.id + '" image="' + s.texture + '" lon="' + s.lon + '" lat="' + s.lat + '"';
       if (s.isHomeScene) { sceneTag  += ' isHomeScene="true"'; }
+      if (s.displayName) { sceneTag += ' displayName="' + s.displayName + '"'; }
       sceneTag += '>';
 
       xml += "\t" + sceneTag + "\n";
@@ -481,6 +507,7 @@ function PanoScene (args) {
 
   var args = args || {};
   this.id = args.id || 'pano-scene';
+  this.displayName = args.displayName || '';
   this.texture = args.texture || this.id + '.jpg';
   this.hotspots = args.hotspots || [];
   this.lat = args.lat || 0;

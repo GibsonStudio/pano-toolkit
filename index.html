@@ -39,8 +39,13 @@
       <div class="pano-button" id="arrow-right" style="left:110px; top:30px;" onmousedown="Pano.activeControl='move-right';"></div>
       <div class="pano-button" id="zoom-in" title="Zoom In" style="left:160px; top:30px;" onmousedown="Pano.activeControl='zoom-in';"></div>
       <div class="pano-button" id="zoom-out" title="Zoom Out" style="left:195px; top:30px;" onmousedown="Pano.activeControl='zoom-out';"></div>
-      <div class="pano-button" id="auto-rotate" title="Start/Stop Autorotation" style="left:245px; top:30px;" onmousedown="Pano.toggleAutorotate();"></div>
-      <div class="pano-button" id="fullscreen" title="Fullscreen" style="left:280px; top:30px;" onclick="toggleFullscreen();"></div>
+
+      <div class="pano-button" id="menu" title="Menu" style="left:245px; top:30px;" onmousedown="toggleMenu();"></div>
+      <div class="pano-button" id="auto-rotate" title="Start/Stop Autorotation" style="left:280px; top:30px;" onmousedown="Pano.toggleAutorotate();"></div>
+      <div class="pano-button" id="fullscreen" title="Fullscreen" style="left:315px; top:30px;" onclick="toggleFullscreen();"></div>
+
+      <div id="pano-menu" class="noselect"></div>
+
     </div>
 
   </div>

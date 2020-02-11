@@ -8,6 +8,16 @@ body {
 }
 
 
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
 #my-container {  position:relative; overflow:hidden; width:100%; height:100%; }
 #my-canvas-container { position:absolute; left:0; top:0; width:100%; height:100%; overflow:hidden; }
 #my-overlays { position:absolute; left:0; top:0; width:0%; height:0%; }
@@ -43,8 +53,8 @@ body {
 
 #controls-container {
   position:absolute; left:100px; bottom:0px;
-  width:320px; height:94px;
-  background-color:rgba(100, 100, 100, 0.1);
+  width:355px; height:94px;
+  background-color:rgba(100, 100, 100, 0.2);
 }
 
 .pano-button {
@@ -61,10 +71,16 @@ body {
 #arrow-down { background-image:url('img-system/arrow-down.png'); }
 #zoom-in { background-image:url('img-system/zoom-in.png'); }
 #zoom-out { background-image:url('img-system/zoom-out.png'); }
+#menu { background-image:url('img-system/menu.png'); }
 #auto-rotate { background-image:url('img-system/auto-rotate.png'); }
 #fullscreen { background-image:url('img-system/fullscreen.png'); }
 
-
+#pano-menu {
+  position:absolute; left:245px; bottom:70px;
+  width:200px; height:200px; overflow-y:scroll;
+  color:#333333; background-color:rgba(255,255,255,0.7); border:1px solid #999999;
+  display:none;
+}
 
 
 
