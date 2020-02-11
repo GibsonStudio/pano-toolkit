@@ -39,7 +39,7 @@ if ($submitted) {
       echo '<div class="error">ERROR: Unknown error.</div>';
     }
 
-    echo '<button onclick="parent.Toolkit.CloseUploadDialog()">OK</button>';
+    echo '<button onclick="parent.Toolkit.CloseUploadPopup()">OK</button>';
 
   }
 

@@ -6,27 +6,8 @@
 function Toolkit (args) {
 
   var args = args || {};
-
-  // Add Hotspot Popup
-  this.AddHotspotPopup = new Popup({ title:"Add Hotspot" });
-  this.AddHotspotPopup.addField({ label:"ID", id:"id" });
-  this.AddHotspotPopup.addField({ label:"Link", id:"link" });
-  this.AddHotspotPopup.addField({ label:"Title", id:"title" });
-  this.AddHotspotPopup.addField({ label:"Lat", id:"lat", type:"number" });
-  this.AddHotspotPopup.addField({ label:"Lon", id:"lon", type:"number" });
-  this.AddHotspotPopup.addButton({ text:"Add", callback:"Toolkit.AddHotspot" });
-  this.AddHotspotPopup.addButton({ type:"cancel", text:"Close" });
-
-  // Add Scene Popup
-  this.AddScenePopup = new Popup({ title:"Add Scene" });
-  this.AddScenePopup.addField({ label:"ID", id:"id" });
-  this.AddScenePopup.addField({ label:"Display Name", id:"displayName" });
-  this.AddScenePopup.addField({ label:"Image", id:"image", value:"default.jpg" });
-  this.AddScenePopup.addField({ label:"Lat", id:"lat", type:"number" });
-  this.AddScenePopup.addField({ label:"Lon", id:"lon", type:"number" });
-  this.AddScenePopup.addButton({ text:"Add", callback:"Toolkit.AddScene" });
-  this.AddScenePopup.addButton({ type:"cancel", text:"Close" });
-
+  this.AddHotspotPopup = false;
+  this.AddScenePopup = false;
   this.Upload = false;
   this.ImagePicker = false;
 
@@ -113,8 +94,8 @@ function Toolkit (args) {
 
     if (onlineMode) {
       h += '<button class="debugButton" onclick="Toolkit.Save();">Save</button>';
-      h += '<button class="debugButton" onclick="Toolkit.ShowDeleteDialog();">Delete</button>';
-      h += '<button class="debugButton" onclick="Toolkit.ShowUploadDialog();">Upload Image</button>';
+      h += '<button class="debugButton" onclick="Toolkit.ShowDeletePopup();">Delete</button>';
+      h += '<button class="debugButton" onclick="Toolkit.ShowUploadPopup();">Upload Image</button>';
       h += '<button class="debugButton" onclick="Toolkit.Publish();">Publish</button>';
     }
 
@@ -122,12 +103,12 @@ function Toolkit (args) {
 
     h += '<div style="border:1px solid #999999; margin-bottom:10px;">';
     h += '<div style="font-size:12px; font-weight:bold;">Scene</div>';
-    h += '<button class="debugButton" onclick="Toolkit.AddScenePopup.show();">Add</button>';
-    h += '<button class="debugButton" onclick="Toolkit.ShowEditSceneDialog();">Edit</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowAddScenePopup();">Add</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowEditScenePopup();">Edit</button>';
     if (onlineMode) { h += '<button class="debugButton" onclick="Toolkit.ShowImagePicker();">Change Image</button>'; }
     h += '<button class="debugButton" onclick="Toolkit.SetScenePosition();">Set Position</button>';
-    h += '<button class="debugButton" onclick="Toolkit.ShowDeleteSceneDialog();">Delete Current</button>';
-    h += '<button class="debugButton" onclick="Toolkit.AddHotspotPopup.show();">Add Hotspot</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowDeleteScenePopup();">Delete Current</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowAddHotspotPopup();">Add Hotspot</button>';
     h += '</div>';
 
     h += '<hr />';
@@ -258,7 +239,7 @@ function Toolkit (args) {
   }
 
 
-  this.ShowEditSceneDialog = function () {
+  this.ShowEditScenePopup = function () {
 
     var editScenePopup = new Popup({ title:"Edit Scene" });
     editScenePopup.addField({ label:"ID", id:"id", value:Pano.loadedScene.id });
@@ -277,8 +258,9 @@ function Toolkit (args) {
   this.EditScene = function (args) {
 
     var args = args || {};
+    var displayName = typeof args.displayName === "undefined" ? "" : args.displayName;
     Pano.loadedScene.id = args.id ? args.id : Pano.loadedScene.id;
-    Pano.loadedScene.displayName = args.displayName ? args.displayName : Pano.loadedScene.displayName;
+    Pano.loadedScene.displayName = displayName;
     Pano.loadedScene.texture = args.texture ? args.texture : Pano.loadedScene.texture;
     Pano.loadedScene.lon = args.lon ? parseFloat(args.lon) : Pano.loadedScene.lon;
     Pano.loadedScene.lat = args.lat ? parseFloat(args.lat) : Pano.loadedScene.lat;
@@ -288,7 +270,23 @@ function Toolkit (args) {
 
     // reload scene?
     this.AddSceneLinks();
+    Pano.addMenuLinks();
     Pano.loadedScene.loadTexture();
+
+  }
+
+
+  this.ShowAddScenePopup = function () {
+
+    this.AddScenePopup = new Popup({ title:"Add Scene" });
+    this.AddScenePopup.addField({ label:"ID", id:"id" });
+    this.AddScenePopup.addField({ label:"Display Name", id:"displayName" });
+    this.AddScenePopup.addField({ label:"Image", id:"image", value:"default.jpg" });
+    this.AddScenePopup.addField({ label:"Lat", id:"lat", type:"number" });
+    this.AddScenePopup.addField({ label:"Lon", id:"lon", type:"number" });
+    this.AddScenePopup.addButton({ text:"Add", callback:"Toolkit.AddScene" });
+    this.AddScenePopup.addButton({ type:"cancel", text:"Close" });
+    this.AddScenePopup.show();
 
   }
 
@@ -307,11 +305,12 @@ function Toolkit (args) {
     Pano.scenes.push(panoScene);
 
     this.AddSceneLinks();
+    Pano.addMenuLinks();
 
   }
 
 
-  this.ShowDeleteSceneDialog = function () {
+  this.ShowDeleteScenePopup = function () {
 
     var myMessage = "This will remove the current scene.";
     myMessage += "<br /><br />The database is not updated until you save.";
@@ -334,6 +333,21 @@ function Toolkit (args) {
     Pano.scenes.splice(sIndex, 1);
     this.AddSceneLinks();
     Pano.scenes[0].load();
+
+  }
+
+
+  this.ShowAddHotspotPopup = function () {
+
+    this.AddHotspotPopup = new Popup({ title:"Add Hotspot" });
+    this.AddHotspotPopup.addField({ label:"ID", id:"id" });
+    this.AddHotspotPopup.addField({ label:"Link", id:"link" });
+    this.AddHotspotPopup.addField({ label:"Title", id:"title" });
+    this.AddHotspotPopup.addField({ label:"Lat", id:"lat", type:"number" });
+    this.AddHotspotPopup.addField({ label:"Lon", id:"lon", type:"number" });
+    this.AddHotspotPopup.addButton({ text:"Add", callback:"Toolkit.AddHotspot" });
+    this.AddHotspotPopup.addButton({ type:"cancel", text:"Close" });
+    this.AddHotspotPopup.show();
 
   }
 
@@ -384,7 +398,7 @@ function Toolkit (args) {
   }
 
 
-  this.ShowDeleteHotspotDialog = function () {
+  this.ShowDeleteHotspotPopup = function () {
 
     var myMessage = "This will remove the current hotspot.";
     myMessage += "<br /><br />The database is not updated until you save.";
@@ -531,7 +545,7 @@ function Toolkit (args) {
 
   // ******** image upload ********
 
-  this.ShowUploadDialog = function () {
+  this.ShowUploadPopup = function () {
 
     this.Upload = new Upload({ title:"Upload File:", text:"Supported formats are jpg, jpeg, and png." });
     this.Upload.show();
@@ -539,7 +553,7 @@ function Toolkit (args) {
   }
 
 
-  this.CloseUploadDialog = function () {
+  this.CloseUploadPopup = function () {
     this.Upload.close();
   }
 
@@ -551,7 +565,7 @@ function Toolkit (args) {
 
   // ******** delete panorama ********
 
-  this.ShowDeleteDialog = function () {
+  this.ShowDeletePopup = function () {
 
     var myMessage = "This will remove the currently loaded panorama data from the database.";
     myMessage += "<br /><br />This cannot be undone.";
@@ -582,7 +596,7 @@ function Toolkit (args) {
           Pano.id = 0;
           Pano.name = "";
           Pano.scenes = [];
-          loadXML();
+          Pano.loadXML();
           Toolkit.RefreshSaved();
 
         } else {

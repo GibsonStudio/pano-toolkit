@@ -1,12 +1,5 @@
 
-
-//TODO: add displayName to scene properties, use this in pano-menu
-
-//TODO: toolkit mode, when editing a displayName, pano-menu needs to update
-
-//TODO, remove popup global objects and build popups in showPopup function
-
-//TODO: make panos publish to subfolders - use pano name for folder name
+//TODO: chnage all ShowAddThingDialo to ShowAddThingPopup
 
 //bugs
 
@@ -192,28 +185,40 @@ function Pano (args) {
 
     if (debugMode) { Toolkit.AddSceneLinks(); }
 
-    // add menu links
+    this.addMenuLinks();
+
+    Pano.home();
+
+  }
+
+
+  this.addMenuLinks = function () {
+
     var cont = document.getElementById("pano-menu");
     cont.innerHTML = "";
 
-    for (var i = 0; i < Pano.scenes.length; i++) {
+    for (var i = 0; i < this.scenes.length; i++) {
 
-      var el = document.createElement("div");
-      el.style.setProperty("font-size", "12px");
-      el.style.setProperty("padding", "4px");
-      el.style.setProperty("cursor", "pointer");
-      el.innerHTML = Pano.scenes[i].displayName;
+      if (this.scenes[i].displayName) {
 
-      el.sceneId = Pano.scenes[i].id;
-      el.onclick = function () { Pano.load(this.sceneId); }
+        var el = document.createElement("div");
+        el.style.setProperty("font-size", "12px");
+        el.style.setProperty("padding", "4px");
+        el.style.setProperty("cursor", "pointer");
+        el.innerHTML = this.scenes[i].displayName;
 
-      if (Pano.scenes[i].displayName) {
+        el.sceneId = this.scenes[i].id;
+        var myThis = this;
+        el.onclick = function () { myThis.load(this.sceneId); }
+
         cont.appendChild(el);
+
       }
 
     }
 
-    Pano.home();
+    if (cont.innerHTML == "") { $("#menu").hide(); }
+    else { $("#menu").show(); }
 
   }
 
@@ -736,7 +741,7 @@ function PanoHotspot (args) {
         hp.addButton({ text:"Navigate To", callback:"Toolkit.HotspotClicked" });
         hp.addButton({ text:"Update", callback:"Toolkit.UpdateHotspot" });
         hp.addButton({ text:"Show XML", callback:"Toolkit.ShowHotspotXML" });
-        hp.addButton({ text:"Delete", callback:"Toolkit.ShowDeleteHotspotDialog"});
+        hp.addButton({ text:"Delete", callback:"Toolkit.ShowDeleteHotspotPopup"});
         hp.addButton({type:"cancel" });
         hp.show();
 

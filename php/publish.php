@@ -32,7 +32,7 @@ $id = $pano['id'];
 $name = $pano['name'];
 $xml = $pano['xml'];
 
-$publishDir = "..\\published\\";
+$publishDir = "..\\published\\".$name."\\";
 
 // remove folder
 removeDir($publishDir);
@@ -110,7 +110,7 @@ foreach ($files as $f) {
 
 if (substr($filename, -4) !== ".zip") { $filename .= '.zip'; }
 
-$publishDir = "..\\published\\";
+//$publishDir = "..\\published\\";
 $outputDir = "..\\download\\";
 
 $zipFile = $outputDir.$filename;
