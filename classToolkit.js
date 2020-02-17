@@ -80,7 +80,7 @@ function Toolkit (args) {
     var h = "";
 
     h += '<style>';
-    h += '.debugButton { background-color:#d4d4d4; color:#666666; margin:4px 10px; padding:4px; border:none; cursor:pointer; font-size:11px; }';
+    h += '.debugButton { background-color:#d4d4d4; color:#666666; margin:4px 4px; padding:4px; border:none; cursor:pointer; font-size:11px; }';
     h += '.fieldTitle { font-size:12px; color:#666666;}';
     h += '</style>';
 
@@ -105,12 +105,14 @@ function Toolkit (args) {
     h += '<div style="font-size:12px; font-weight:bold;">Scene</div>';
     h += '<button class="debugButton" onclick="Toolkit.ShowAddScenePopup();">Add</button>';
     h += '<button class="debugButton" onclick="Toolkit.ShowEditScenePopup();">Edit</button>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowDeleteScenePopup();">Delete</button>';
     h += '<button class="debugButton" onclick="Toolkit.SetScenePosition();">Set Position</button>';
-    h += '<button class="debugButton" onclick="Toolkit.ShowDeleteScenePopup();">Delete Current</button>';
-    h += '<button class="debugButton" onclick="Toolkit.ShowAddHotspotPopup();">Add Hotspot</button>';
     h += '</div>';
 
-    h += '<hr />';
+    h += '<div style="border:1px solid #999999; margin-bottom:10px;">';
+    h += '<div style="font-size:12px; font-weight:bold;">Hotspot</div>';
+    h += '<button class="debugButton" onclick="Toolkit.ShowAddHotspotPopup();">Add</button>';
+    h += '</div>';
 
     h += '<table>';
     h += '<tr> <td class="fieldTitle">Lon:</td> <td><input id="debugLon" type="number" value="0" /></td> </tr>';

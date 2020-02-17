@@ -1,9 +1,8 @@
 
 
-//TODO: menu - put add hotspot into its own section
 //TODO: change hotspot icon to a smaller, solid icon
 
-
+//TODO: is style.css dummyContainer needed - menus seem to be in it?
 
 
 
