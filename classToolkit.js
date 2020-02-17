@@ -250,6 +250,7 @@ function Toolkit (args) {
     editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:Pano.loadedScene.isHomeScene });
     editScenePopup.addButton({ text:"Save", callback:"Toolkit.EditScene" });
     editScenePopup.addButton({ type:"cancel", text:"Cancel" });
+    editScenePopup.addButton({ text:"Choose Image", callback:"Toolkit.ShowImagePicker" });
     editScenePopup.show();
 
   }
@@ -526,6 +527,8 @@ function Toolkit (args) {
 
 
   this.ChangeImage = function (img) {
+
+    console.log(img);
 
     this.ImagePicker.close();
 

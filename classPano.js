@@ -1,5 +1,9 @@
 
-//TODO: chnage all ShowAddThingDialo to ShowAddThingPopup
+
+//TODO add image picker to add scene dialogue
+//TODO: classPopup- need option to NOT close popup on button.callback
+
+
 
 //bugs
 
