@@ -240,27 +240,6 @@ function Toolkit (args) {
   }
 
 
-  this.ShowEditScenePopup = function () {
-
-    var editScenePopup = new Popup({ title:"Edit Scene" });
-    editScenePopup.addField({ label:"ID", id:"id", value:Pano.loadedScene.id });
-    editScenePopup.addField({ label:"Display Name", id:"displayName", value:Pano.loadedScene.displayName });
-    editScenePopup.addField({ label:"Image", id:"texture", value:Pano.loadedScene.texture });
-    editScenePopup.addField({ label:"Lon", id:"lon", type:"number", value:Pano.loadedScene.lon });
-    editScenePopup.addField({ label:"Lat", id:"lat", type:"number", value:Pano.loadedScene.lat });
-    editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:Pano.loadedScene.isHomeScene });
-    editScenePopup.addButton({ text:"Save", callback:"Toolkit.EditScene" });
-    editScenePopup.addButton({ type:"cancel", text:"Cancel" });
-
-    if (Pano.mode >= 2) {
-      editScenePopup.addButton({ text:"Choose Image", callback:"Toolkit.ShowImagePicker", closeOnClick:false });
-    }
-
-    editScenePopup.show();
-
-  }
-
-
   this.EditScene = function (args) {
 
     var args = args || {};
@@ -278,21 +257,6 @@ function Toolkit (args) {
     this.AddSceneLinks();
     Pano.addMenuLinks();
     Pano.loadedScene.loadTexture();
-
-  }
-
-
-  this.ShowAddScenePopup = function () {
-
-    this.AddScenePopup = new Popup({ title:"Add Scene" });
-    this.AddScenePopup.addField({ label:"ID", id:"id" });
-    this.AddScenePopup.addField({ label:"Display Name", id:"displayName" });
-    this.AddScenePopup.addField({ label:"Image", id:"image", value:"default.jpg" });
-    this.AddScenePopup.addField({ label:"Lat", id:"lat", type:"number" });
-    this.AddScenePopup.addField({ label:"Lon", id:"lon", type:"number" });
-    this.AddScenePopup.addButton({ text:"Add", callback:"Toolkit.AddScene" });
-    this.AddScenePopup.addButton({ type:"cancel", text:"Close" });
-    this.AddScenePopup.show();
 
   }
 
@@ -316,19 +280,6 @@ function Toolkit (args) {
   }
 
 
-  this.ShowDeleteScenePopup = function () {
-
-    var myMessage = "This will remove the current scene.";
-    myMessage += "<br /><br />The database is not updated until you save.";
-
-    var del = new Popup({ title:"Delete?", text:myMessage });
-    del.addButton({ text:"OK", callback:"Toolkit.DeleteScene()" });
-    del.addButton({ type:"cancel" });
-    del.show();
-
-  }
-
-
   this.DeleteScene = function () {
 
     var sceneCount = Pano.scenes.length;
@@ -343,21 +294,6 @@ function Toolkit (args) {
   }
 
 
-  this.ShowAddHotspotPopup = function () {
-
-    this.AddHotspotPopup = new Popup({ title:"Add Hotspot" });
-    this.AddHotspotPopup.addField({ label:"ID", id:"id" });
-    this.AddHotspotPopup.addField({ label:"Link", id:"link" });
-    this.AddHotspotPopup.addField({ label:"Title", id:"title" });
-    this.AddHotspotPopup.addField({ label:"Lat", id:"lat", type:"number" });
-    this.AddHotspotPopup.addField({ label:"Lon", id:"lon", type:"number" });
-    this.AddHotspotPopup.addButton({ text:"Add", callback:"Toolkit.AddHotspot" });
-    this.AddHotspotPopup.addButton({ type:"cancel", text:"Close" });
-    this.AddHotspotPopup.show();
-
-  }
-
-
   this.AddHotspot = function (args) {
 
      var args = args || {};
@@ -365,10 +301,11 @@ function Toolkit (args) {
      var myID = args.id ? args.id : "hs-" + Math.round(Math.random() * 100000);
      var myLink = args.link ? args.link : "";
      var myTitle = args.title ? args.title : "";
+     var myImage = args.image ? args.image : "hotspot-red.jpg";
      var myLon = args.lon ? parseFloat(args.lon) : 180 - Pano.lon;
      var myLat = args.lat ? parseFloat(args.lat) : -Pano.lat;
 
-     Pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, lon:myLon, lat:myLat }, true);
+     Pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, img:myImage, lon:myLon, lat:myLat }, true);
 
   }
 
@@ -393,6 +330,7 @@ function Toolkit (args) {
     Pano.clickedHotspot.id = id;
     Pano.clickedHotspot.link = args.link ? args.link : "";
     Pano.clickedHotspot.title = title;
+    Pano.clickedHotspot.img = args.image;
     Pano.clickedHotspot.sceneLon = args.sceneLon ? parseFloat(args.sceneLon) : 0;
     Pano.clickedHotspot.sceneLat = args.sceneLat ? parseFloat(args.sceneLat) : 0;
 
@@ -400,19 +338,7 @@ function Toolkit (args) {
     var el = document.getElementById("overlay-" + originalID);
     el.id = "overlay-" + id;
     el.title = title;
-
-  }
-
-
-  this.ShowDeleteHotspotPopup = function () {
-
-    var myMessage = "This will remove the current hotspot.";
-    myMessage += "<br /><br />The database is not updated until you save.";
-
-    var del = new Popup({ title:"Delete?", text:myMessage });
-    del.addButton({ text:"OK", callback:"Toolkit.DeleteHotspot()" });
-    del.addButton({ type:"cancel" });
-    del.show();
+    el.style.backgroundImage = 'url("img-system/' + args.image + '")';
 
   }
 
@@ -441,6 +367,98 @@ function Toolkit (args) {
 
 
 
+
+
+
+
+
+  // ******** popups ******** //
+
+  this.ShowAddScenePopup = function () {
+
+    this.AddScenePopup = new Popup({ title:"Add Scene" });
+    this.AddScenePopup.addField({ label:"ID", id:"id" });
+    this.AddScenePopup.addField({ label:"Display Name", id:"displayName" });
+    this.AddScenePopup.addField({ label:"Image", id:"image", value:"default.jpg" });
+    this.AddScenePopup.addField({ label:"Lat", id:"lat", type:"number" });
+    this.AddScenePopup.addField({ label:"Lon", id:"lon", type:"number" });
+    this.AddScenePopup.addButton({ text:"Add", callback:"Toolkit.AddScene" });
+    this.AddScenePopup.addButton({ type:"cancel", text:"Close" });
+    this.AddScenePopup.show();
+
+  }
+
+
+  this.ShowEditScenePopup = function () {
+
+    var editScenePopup = new Popup({ title:"Edit Scene" });
+    editScenePopup.addField({ label:"ID", id:"id", value:Pano.loadedScene.id });
+    editScenePopup.addField({ label:"Display Name", id:"displayName", value:Pano.loadedScene.displayName });
+    editScenePopup.addField({ label:"Image", id:"texture", value:Pano.loadedScene.texture });
+    editScenePopup.addField({ label:"Lon", id:"lon", type:"number", value:Pano.loadedScene.lon });
+    editScenePopup.addField({ label:"Lat", id:"lat", type:"number", value:Pano.loadedScene.lat });
+    editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:Pano.loadedScene.isHomeScene });
+    editScenePopup.addButton({ text:"Save", callback:"Toolkit.EditScene" });
+    editScenePopup.addButton({ type:"cancel", text:"Cancel" });
+
+    if (Pano.mode >= 2) {
+      editScenePopup.addButton({ text:"Choose Image", callback:"Toolkit.ShowImagePicker", closeOnClick:false });
+    }
+
+    editScenePopup.show();
+
+  }
+
+
+  this.ShowAddHotspotPopup = function () {
+
+    this.AddHotspotPopup = new Popup({ title:"Add Hotspot" });
+    this.AddHotspotPopup.addField({ label:"ID", id:"id" });
+    this.AddHotspotPopup.addField({ label:"Link", id:"link" });
+    this.AddHotspotPopup.addField({ label:"Title", id:"title" });
+
+    var hsOptions = [ ["Red", "hotspot-red.png"],
+                    ["Blue", "hotspot-blue.png"],
+                    ["Green", "hotspot-green.png"],
+                    ["Black", "hotspot-black.png"],
+                    ["Orange", "hotspot-orange.png"],
+                    ["Yellow", "hotspot-yellow.png"],
+                    ["Purple", "hotspot-purple.png"] ];
+    this.AddHotspotPopup.addField({ label:"Image", id:"image", value:this.img, type:"select", options:hsOptions });
+
+    this.AddHotspotPopup.addField({ label:"Lat", id:"lat", type:"number" });
+    this.AddHotspotPopup.addField({ label:"Lon", id:"lon", type:"number" });
+    this.AddHotspotPopup.addButton({ text:"Add", callback:"Toolkit.AddHotspot" });
+    this.AddHotspotPopup.addButton({ type:"cancel", text:"Close" });
+    this.AddHotspotPopup.show();
+
+  }
+
+
+  this.ShowDeleteHotspotPopup = function () {
+
+    var myMessage = "This will remove the current hotspot.";
+    myMessage += "<br /><br />The database is not updated until you save.";
+
+    var del = new Popup({ title:"Delete?", text:myMessage });
+    del.addButton({ text:"OK", callback:"Toolkit.DeleteHotspot()" });
+    del.addButton({ type:"cancel" });
+    del.show();
+
+  }
+
+
+  this.ShowDeleteScenePopup = function () {
+
+    var myMessage = "This will remove the current scene.";
+    myMessage += "<br /><br />The database is not updated until you save.";
+
+    var del = new Popup({ title:"Delete?", text:myMessage });
+    del.addButton({ text:"OK", callback:"Toolkit.DeleteScene()" });
+    del.addButton({ type:"cancel" });
+    del.show();
+
+  }
 
 
 

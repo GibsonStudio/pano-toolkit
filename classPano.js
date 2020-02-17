@@ -1,9 +1,5 @@
 
-
-//TODO: change hotspot icon to a smaller, solid icon
-
-//TODO: is style.css dummyContainer needed - menus seem to be in it?
-
+//TODO: mousedown event needs to only be on left mouse
 
 
 //bugs
@@ -176,6 +172,7 @@ function Pano (args) {
         args.id = $(this).attr("id");
         args.link = $(this).attr("link");
         args.title = $(this).attr("title");
+        args.img = $(this).attr("image");
         args.lon = parseFloat($(this).attr("lon"));
         args.lat = parseFloat($(this).attr("lat"));
         args.sceneLon = parseFloat($(this).attr("sceneLon"));
@@ -628,8 +625,8 @@ function PanoHotspot (args) {
   this.link = args.link || this.id;
 
   this.img = args.img || 'hotspot-red.png';
-  this.imgW = args.imgW || 50;
-  this.imgH = args.imgH || 50;
+  this.imgW = args.imgW || 30;
+  this.imgH = args.imgH || 30;
   this.imgCursor = args.imgCursor || 'pointer';
   this.title = args.title || '';
 
@@ -690,6 +687,7 @@ function PanoHotspot (args) {
     xml += 'lat="' + (this.lat).toFixed(2) + '" ';
     if (this.title) { xml += 'title="'+ this.title + '" '; }
     if (this.link && this.link != this.id) { xml += 'link="'+ this.link + '" '; }
+    xml += ' image="' + this.img + '"';
     if (this.sceneLat) { xml += 'sceneLat="'+ this.sceneLat + '" '; }
     if (this.sceneLon) { xml += 'sceneLon="'+ this.sceneLon + '" '; }
     xml += '></hotspot>';
@@ -741,6 +739,16 @@ function PanoHotspot (args) {
         hp.addField({ label:"ID", id:"id", value:this.id });
         hp.addField({ label:"Link", id:"link", value:this.link });
         hp.addField({ label:"Title", id:"title", value:this.title });
+
+        var hsOptions = [ ["Red", "hotspot-red.png"],
+                        ["Blue", "hotspot-blue.png"],
+                        ["Green", "hotspot-green.png"],
+                        ["Black", "hotspot-black.png"],
+                        ["Orange", "hotspot-orange.png"],
+                        ["Yellow", "hotspot-yellow.png"],
+                        ["Purple", "hotspot-purple.png"] ];
+        hp.addField({ label:"Image", id:"image", value:this.img, type:"select", options:hsOptions });
+
         hp.addField({ label:"Scene Lon", id:"sceneLon", type:"number", value:this.sceneLon });
         hp.addField({ label:"Scene Lat", id:"sceneLat", type:"number", value:this.sceneLat });
 

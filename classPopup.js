@@ -189,8 +189,7 @@ function Popup (args) {
 
 
 
-  this.setFieldValue = function (fieldID, fieldValue)
-  {
+  this.setFieldValue = function (fieldID, fieldValue) {
 
     for (var i = 0; i < this.fields.length; i++) {
 
@@ -237,6 +236,7 @@ function Popup (args) {
     this.label = args.label || "My Field";
     this.value = typeof(args.value) === "undefined" ? '' : args.value;
     this.type = args.type || "text";
+    this.options = args.options || [];
     this.min = typeof(args.min) === "undefined" ? '' : args.min;
     this.max = typeof(args.max) === "undefined" ? '' : args.max;
     this.height = args.height || false;
@@ -268,6 +268,16 @@ function Popup (args) {
         } else {
           thisInput.style.setProperty("height", "60px");
         }
+      } else if (this.type == "select") {
+
+        var thisInput = document.createElement("select");
+        for (var o = 0; o < this.options.length; o++) {
+          var option = document.createElement("option");
+          option.value = this.options[o][1];
+          option.text = this.options[o][0];
+          thisInput.appendChild(option);
+        }
+
       } else {
         var thisInput = document.createElement("input");
       }
