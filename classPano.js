@@ -1,9 +1,7 @@
 
 
-//TODO: lib.js, debugMode and onlineMode need renaming to something more meaningful
-//TODO: Pano.mode needs to be 0 in published Pano
-
 //TODO: menu - put add hotspot into its own section
+//TODO: change hotspot icon to a smaller, solid icon
 
 
 

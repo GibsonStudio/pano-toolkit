@@ -1,6 +1,6 @@
 
-
-var Pano = new Pano({ mode:2 });
+var panoMode = (typeof panoMode !== 'undefined') ? panoMode : 0;
+var Pano = new Pano({ mode:panoMode });
 var Toolkit;
 
 
