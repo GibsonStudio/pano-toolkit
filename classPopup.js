@@ -12,6 +12,8 @@
 // v1.34 30/1/2020 - made checkboxes properly display thier initial value
 // v1.35 5/2/2020 - allowed this.callback to call a function, if this.callback contains ")"
 //                - allowed Class.Function to be used as a callback
+// v1.36 17/02/2020 - moved this.closeOnSubmit to Button.closeOnClick
+
 
 // Buttons:
 // If no butttons are specified, ther default Submit and Cancel buttons are added
@@ -312,6 +314,7 @@ function Popup (args) {
     this.type = args.type || false; // submit OR cancel for default actions
     this.text = args.text || "";
     this.callback = args.callback || "";
+    this.closeOnClick = typeof(args.closeOnClick) !== "undefined" ? args.closeOnClick : true;
 
     if (this.type == "submit") {
       if (!this.text) { this.text = "Submit"; }
@@ -361,7 +364,8 @@ function Popup (args) {
           window[this.callback](this.parent.getData());
         }
 
-        if (this.parent.closeOnSubmit) { this.parent.close(); }
+        //if (this.parent.closeOnSubmit) { this.parent.close(); }
+        if (this.closeOnClick) { this.parent.close(); }
 
       }
 

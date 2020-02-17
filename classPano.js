@@ -1,7 +1,11 @@
 
 
-//TODO add image picker to add scene dialogue
-//TODO: classPopup- need option to NOT close popup on button.callback
+//TODO: lib.js, debugMode and onlineMode need renaming to something more meaningful
+//TODO: Pano.mode needs to be 0 in published Pano
+
+//TODO: menu - put add hotspot into its own section
+
+
 
 
 
@@ -14,6 +18,7 @@ function Pano (args) {
   var args = args || {};
   this.id = args.id || 0;
   this.name = args.name || "";
+  this.mode = args.mode || 0; // 0 = runtime, 1 = offline edit, 2 = online edit
   this.active = args.active || false;
   this.clickedX = args.clickedX || 0;
   this.clickedY = args.clickedY || 0;
@@ -64,7 +69,7 @@ function Pano (args) {
       $('#my-container').height(this.HEIGHT);
     }
 
-    if (debugMode) { Toolkit.Init(); }
+    if (Pano.mode >= 1) { Toolkit.Init(); }
 
     this.container = document.getElementById('my-canvas-container');
 
@@ -187,7 +192,7 @@ function Pano (args) {
 
     });
 
-    if (debugMode) { Toolkit.AddSceneLinks(); }
+    if (Pano.mode >= 1) { Toolkit.AddSceneLinks(); }
 
     this.addMenuLinks();
 
@@ -669,7 +674,7 @@ function PanoHotspot (args) {
     if (this.title) { el.title = this.title; }
     var myThis = this;
 
-    if (debugMode) {
+    if (Pano.mode >= 1) {
       el.onmouseup = function (event) { myThis.mouseUpMe(event); }
       el.onmousedown = function (event) { myThis.mouseDownMe(event); }
     } else {
@@ -732,7 +737,7 @@ function PanoHotspot (args) {
 
     if (Pano.mouse.x == this.clickedX && Pano.mouse.y == this.clickedY) {
 
-      if (debugMode) {
+      if (Pano.mode >= 1) {
 
         Pano.clickedHotspot = this;
         var hp = new Popup({ id:"hotspot-options", title:"Hotspot Options:" });
@@ -760,7 +765,7 @@ function PanoHotspot (args) {
 
   this.mouseDownMe = function (e) {
 
-    if (!debugMode) { return false; }
+    if (Pano.mode == 0) { return false; }
 
     e.preventDefault();
 

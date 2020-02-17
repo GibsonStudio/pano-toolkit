@@ -40,7 +40,7 @@ function Toolkit (args) {
     dc.appendChild(el);
 
     // load button
-    if (onlineMode) {
+    if (Pano.mode >= 2) {
 
       var el = document.createElement("div");
 
@@ -92,7 +92,7 @@ function Toolkit (args) {
     h += '<button class="debugButton" onclick="Toolkit.EditPanoInfo();">Info</button>';
     h += '<button class="debugButton" onclick="Toolkit.ShowXML();">Show XML</button>';
 
-    if (onlineMode) {
+    if (Pano.mode >= 2) {
       h += '<button class="debugButton" onclick="Toolkit.Save();">Save</button>';
       h += '<button class="debugButton" onclick="Toolkit.ShowDeletePopup();">Delete</button>';
       h += '<button class="debugButton" onclick="Toolkit.ShowUploadPopup();">Upload Image</button>';
@@ -105,7 +105,6 @@ function Toolkit (args) {
     h += '<div style="font-size:12px; font-weight:bold;">Scene</div>';
     h += '<button class="debugButton" onclick="Toolkit.ShowAddScenePopup();">Add</button>';
     h += '<button class="debugButton" onclick="Toolkit.ShowEditScenePopup();">Edit</button>';
-    if (onlineMode) { h += '<button class="debugButton" onclick="Toolkit.ShowImagePicker();">Change Image</button>'; }
     h += '<button class="debugButton" onclick="Toolkit.SetScenePosition();">Set Position</button>';
     h += '<button class="debugButton" onclick="Toolkit.ShowDeleteScenePopup();">Delete Current</button>';
     h += '<button class="debugButton" onclick="Toolkit.ShowAddHotspotPopup();">Add Hotspot</button>';
@@ -250,7 +249,11 @@ function Toolkit (args) {
     editScenePopup.addField({ label:"Is Home Scene:", id:"isHomeScene", type:"checkbox", value:Pano.loadedScene.isHomeScene });
     editScenePopup.addButton({ text:"Save", callback:"Toolkit.EditScene" });
     editScenePopup.addButton({ type:"cancel", text:"Cancel" });
-    editScenePopup.addButton({ text:"Choose Image", callback:"Toolkit.ShowImagePicker" });
+
+    if (Pano.mode >= 2) {
+      editScenePopup.addButton({ text:"Choose Image", callback:"Toolkit.ShowImagePicker", closeOnClick:false });
+    }
+
     editScenePopup.show();
 
   }
@@ -528,10 +531,12 @@ function Toolkit (args) {
 
   this.ChangeImage = function (img) {
 
-    console.log(img);
+    var el = document.getElementById("texture");
+    el.value = img;
 
     this.ImagePicker.close();
 
+    /*
     if (Pano.loadedScene) {
 
       Pano.loadedScene.texture = img;
@@ -539,6 +544,7 @@ function Toolkit (args) {
       Pano.loadedScene.loadTexture();
 
     }
+    */
 
   }
 

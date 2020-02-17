@@ -1,22 +1,16 @@
 
-var Pano;
+
+var Pano = new Pano({ mode:2 });
 var Toolkit;
 
-// if debugMode = true, the panorama can be edited
-var debugMode = (typeof debugMode === 'undefined') ? false : debugMode;
 
-// if onlineMode = true, the code which connects to a MySQL database and saves the panoramas is enabled
-var onlineMode = (typeof onlineMode === 'undefined') ? false : onlineMode;
-
-
-if (debugMode) {
+if (Pano.mode >= 1) {
 
   var h = '<script src="classPopup.js"></script>';
   h += '<script src="classMessage.js"></script>';
   h += '<script src="classToolkit.js"></script>';
 
-  if (onlineMode) {
-    //h += '<script src="libOnline.js"></script>';
+  if (Pano.mode >= 2) {
     h += '<script src="classUpload.js"></script>';
     h += '<script src="classImagePicker.js"></script>';
   }
@@ -26,10 +20,11 @@ if (debugMode) {
 }
 
 
+
+
 function initVars () {
 
-  Pano = new Pano();
-  if (debugMode) { Toolkit = new Toolkit(); }
+  if (Pano.mode >= 1) { Toolkit = new Toolkit(); }
 
 }
 
@@ -42,15 +37,12 @@ function ToggleHelp () {
 }
 
 
-
 function toggleMenu () {
   $("#pano-menu").toggle();
 }
 
 
-
-function enterFullscreen ()
-{
+function enterFullscreen () {
 
   if (document.documentElement.requestFullscreen) {
     document.documentElement.requestFullscreen();
@@ -65,9 +57,7 @@ function enterFullscreen ()
 }
 
 
-
-function exitFullscreen ()
-{
+function exitFullscreen () {
 
   if (document.exitFullscreen) {
     document.exitFullscreen();
@@ -80,9 +70,6 @@ function exitFullscreen ()
   }
 
 }
-
-
-
 
 
 function resizeMe ()
