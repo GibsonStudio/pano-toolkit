@@ -1,5 +1,4 @@
 
-//TODO: mousedown event needs to only be on left mouse
 
 
 //bugs
@@ -668,11 +667,12 @@ function PanoHotspot (args) {
     if (this.title) { el.title = this.title; }
     var myThis = this;
 
+
     if (Pano.mode >= 1) {
-      el.onmouseup = function (event) { myThis.mouseUpMe(event); }
-      el.onmousedown = function (event) { myThis.mouseDownMe(event); }
+      el.onmouseup = function (event) { if (event.button == 0) { myThis.mouseUpMe(event); }}
+      el.onmousedown = function (event) { if (event.button == 0) { myThis.mouseDownMe(event); }}
     } else {
-      el.onmousedown = function (event) { myThis.clicked(event); }
+      el.onmousedown = function (event) { if (event.button == 0) { myThis.clicked(event); }}
     }
 
     document.getElementById("my-overlays").appendChild(el);
