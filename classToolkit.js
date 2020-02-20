@@ -93,7 +93,7 @@ function Toolkit (args) {
     h += '<button class="debugButton" onclick="Toolkit.ShowXML();">Show XML</button>';
 
     if (Pano.mode >= 2) {
-      h += '<button class="debugButton" onclick="Toolkit.Save();">Save</button>';
+      h += '<button class="debugButton" onclick="Toolkit.TrySave();">Save</button>';
       h += '<button class="debugButton" onclick="Toolkit.ShowDeletePopup();">Delete</button>';
       h += '<button class="debugButton" onclick="Toolkit.ShowUploadPopup();">Upload Image</button>';
       h += '<button class="debugButton" onclick="Toolkit.Publish();">Publish</button>';
@@ -308,7 +308,7 @@ function Toolkit (args) {
 
      Pano.loadedScene.addHotspot({ id:myID, link:myLink, title:myTitle, img:myImage, lon:myLon, lat:myLat }, true);
 
-  }  
+  }
 
 
   this.UpdateHotspot = function (args) {
@@ -508,28 +508,87 @@ function Toolkit (args) {
 
   // ******** save and load panorama ********
 
+
+  this.TrySave = function () {
+
+    if (!Pano.name) {
+      new Message({ text:"ERROR: Save aborted, name cannot be blank. Set name in Pano Info." });
+      return false;
+    }
+
+    var myThis = this;
+
+    $.ajax({
+      url:"php/panoExists.php",
+      type:"POST",
+      data: { id:Pano.id }
+    }).done(function (data) {
+
+      var data = JSON.parse(data);
+
+      if (data.result == "0") {
+        myThis.Save();
+      } else {
+        myThis.ShowSaveConfirmPopup();
+      }
+
+    });
+
+  }
+
+
+  this.ShowSaveConfirmPopup = function () {
+
+    var myMessage = "This will overwrite the currently saved Panorama: \"" + Pano.name + "\".";
+
+    var del = new Popup({ title:"Overwrite?", text:myMessage });
+    del.addButton({ text:"Overwrite", callback:"Toolkit.Save()" });
+    del.addButton({ type:"cancel" });
+    del.show();
+
+  }
+
+
   this.Save = function () {
 
-      var myXML = Pano.getXML();
+    var myXML = Pano.getXML();
 
-      $.ajax({
-        url:"php/savePano.php",
-        type:"POST",
-        data: { id:Pano.id, name:Pano.name, xml:myXML }
-      }).done(function (data) {
+    $.ajax({
+      url:"php/savePano.php",
+      type:"POST",
+      data: { id:Pano.id, name:Pano.name, xml:myXML }
+    }).done(function (data) {
 
-        var data = JSON.parse(data);
+      var data = JSON.parse(data);
 
-        if (data.insertID) {
-          Pano.id = data.insertID;
-          new Message({ text:"New pano saved OK (" + data.insertID + ")" });
-        } else if (data.result == "OK") {
-          new Message({ text:"Pano " + Pano.id + " updated OK." });
-        } else {
-          new Message({ text:data.result });
-        }
+      if (data.insertID) {
+        Pano.id = data.insertID;
+        new Message({ text:"New pano saved OK (" + data.insertID + ")" });
+      } else if (data.result == "OK") {
+        new Message({ text:"Pano " + Pano.id + " updated OK." });
+      } else {
+        new Message({ text:data.result });
+      }
 
-      });
+    });
+
+  }  
+
+
+  this.PanoExists = function (panoId) {
+
+    var panoId = panoId || 0;
+
+    $.ajax({
+      url:"php/panoExists.php",
+      type:"POST",
+      data: { id:panoId }
+    }).done(function (data) {
+
+      var data = JSON.parse(data);
+      return data.result;
+
+    });
 
   }
 

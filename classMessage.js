@@ -32,7 +32,7 @@ function Message (args) {
     messageEl.id = this.id;
     messageEl.innerHTML = this.text;
     messageEl.style.setProperty("padding", "10px");
-    messageEl.style.setProperty("background-color", "rgba(255, 255, 2455, 0.5)");
+    messageEl.style.setProperty("background-color", "rgba(255, 255, 2455, 0.8)");
     messageEl.style.setProperty("color", "#333333");
     messageEl.style.setProperty("font-size", "12px");
     messageEl.style.setProperty("margin", "10px");
