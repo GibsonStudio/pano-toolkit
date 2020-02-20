@@ -1,7 +1,11 @@
 
 
+//TODO:
+
 
 //bugs
+
+
 
 
 
@@ -735,29 +739,7 @@ function PanoHotspot (args) {
       if (Pano.mode >= 1) {
 
         Pano.clickedHotspot = this;
-        var hp = new Popup({ id:"hotspot-options", title:"Hotspot Options:" });
-        hp.addField({ label:"ID", id:"id", value:this.id });
-        hp.addField({ label:"Link", id:"link", value:this.link });
-        hp.addField({ label:"Title", id:"title", value:this.title });
-
-        var hsOptions = [ ["Red", "hotspot-red.png"],
-                        ["Blue", "hotspot-blue.png"],
-                        ["Green", "hotspot-green.png"],
-                        ["Black", "hotspot-black.png"],
-                        ["Orange", "hotspot-orange.png"],
-                        ["Yellow", "hotspot-yellow.png"],
-                        ["Purple", "hotspot-purple.png"] ];
-        hp.addField({ label:"Image", id:"image", value:this.img, type:"select", options:hsOptions });
-
-        hp.addField({ label:"Scene Lon", id:"sceneLon", type:"number", value:this.sceneLon });
-        hp.addField({ label:"Scene Lat", id:"sceneLat", type:"number", value:this.sceneLat });
-
-        hp.addButton({ text:"Navigate To", callback:"Toolkit.HotspotClicked" });
-        hp.addButton({ text:"Update", callback:"Toolkit.UpdateHotspot" });
-        hp.addButton({ text:"Show XML", callback:"Toolkit.ShowHotspotXML" });
-        hp.addButton({ text:"Delete", callback:"Toolkit.ShowDeleteHotspotPopup"});
-        hp.addButton({type:"cancel" });
-        hp.show();
+        Toolkit.ShowEditHotspotPopup(this);
 
       } else {
         Pano.load(this.link, { clickedHotspot:this });
